@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "checks": [
+    "complete course into arena",
+    "forward progression freezes",
+    "pause freezes countdown",
+    "mouse steering to pads",
+    "three exact signed counterattacks",
+    "zero/exhaustion result",
+    "same sign merge gives no hit",
+    "boss defeated",
+    "forward movement resumes",
+    "no page errors"
+  ],
+  "ending": 95
+}

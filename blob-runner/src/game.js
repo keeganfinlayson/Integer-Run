@@ -79,7 +79,7 @@ function updateIncoming(dt,forwardStep=0){
 function resolve(row){
  if(row.type==='gate'){
   const magnitude=Math.abs(s.value);log(`Gate: |${signed(s.value)}| = ${magnitude}; requires < ${row.capacity}`);
-  if(fits(s.value,row.capacity))stop('A narrow escape!',`${signed(s.value)} fits: ${magnitude} < ${row.capacity}. Your whole swarm passes.`,true);
+  if(fits(s.value,row.capacity)){s.boss=BlobBoss.create();keys.clear();held=0;message('Boss arena: move to a circle. Oppose the pulse and survive.');}
   else stop('Too large to pass.',`|${signed(s.value)}| = ${magnitude}, which is not less than ${row.capacity}. The entire swarm stops. Revisit your earlier choices.`);
  }else if(row.type==='signGate'){
   const word=row.sign>0?'positive':'negative';
@@ -95,6 +95,7 @@ function resolve(row){
 }
 function step(dt){
  if(s.mode!=='running')return;
+ if(s.boss){stepBoss(dt);return;}
  if(s.value===0&&!s.cancel){stop('Zero: no army left.','Your army reached zero. Restart to try another route.');return;}
  s.flash=Math.max(0,s.flash-dt);
  if(s.cancel){
@@ -123,6 +124,32 @@ function step(dt){
  ui.progress.style.width=`${Math.min(100,s.position/LEVEL.length*100)}%`;
 }
 
+function stepBoss(dt){
+ const b=s.boss;
+ if(b.phase==='exit'){b.exit+=dt;s.position+=LEVEL.speed*dt;if(b.exit>=1.5)stop('Boss defeated!',`${signed(s.value)} survives three counters. Course complete!`,true);return;}
+ const dx=(keys.has('ArrowRight')||keys.has('d')||keys.has('D')?1:0)-(keys.has('ArrowLeft')||keys.has('a')||keys.has('A')?1:0)+held;
+ const dy=(keys.has('ArrowDown')||keys.has('s')||keys.has('S')?1:0)-(keys.has('ArrowUp')||keys.has('w')||keys.has('W')?1:0);
+ if(dx||dy){b.tx=b.x+dx*dt*1.25;b.ty=b.y+dy*dt*1.25;}
+ const len=Math.hypot(b.tx,b.ty);if(len>.9){b.tx*=.9/len;b.ty*=.9/len;}
+ // Slide around the central boss instead of crossing through its body.
+ let nx=b.x+(b.tx-b.x)*Math.min(1,dt*10),ny=b.y+(b.ty-b.y)*Math.min(1,dt*10);
+ const dist=Math.hypot(nx,ny+.28);if(dist<.33){nx=nx/dist*.33;ny=-.28+(ny+.28)/dist*.33;}
+ b.x=nx;b.y=ny;
+ if(b.phase==='charge'){
+  b.timer-=dt;
+  if(b.choice===null){const i=BlobBoss.pads.findIndex(p=>Math.hypot(p.x-b.x,p.y-b.y)<.17);if(i>=0){const p=BlobBoss.pads[i],old=s.value;s.value=operation(old,p.op);b.choice=i;log(`${signed(old)} ${p.label} → ${signed(s.value)}`);sync();if(!s.value){stop('Zero: no swarm left.','This operation made zero.');return;}}}
+  if(b.timer<=0){b.phase='pulse';b.elapsed=0;b.before=s.value;b.result=BlobBoss.attack(s.value,b.sign,b.pulse);}
+ }else if(b.phase==='pulse'){b.elapsed+=dt;if(b.elapsed>=.5){b.elapsed=0;b.phase='cancel';}}
+ else if(b.phase==='cancel'){
+  b.elapsed+=dt;
+  if(b.before*b.sign<0){const removed=Math.floor(Math.min(Math.abs(b.before),b.pulse)*Math.min(1,b.elapsed/.5));s.value=Math.sign(b.before)*(Math.abs(b.before)-removed);sync();if(!s.value){stop('Zero: no army left.','The boss pulse exhausted your swarm.');return;}}
+  if(b.elapsed>=.5){s.value=b.result.value;sync();if(b.result.hit)b.hits++;log(`${signed(b.before)} + (${signed(b.sign*b.pulse)}) = ${signed(s.value)}${b.result.hit?' · Boss hit!':' · Same sign: merged, no boss damage'}`);
+   if(b.hits===3){b.phase='exit';b.exit=0;message('Boss defeated! Forward running resumes.');}
+   else{b.sign*=-1;b.round++;b.choice=null;b.phase='charge';b.timer=difficulty==='fast'?3.5:difficulty==='relaxed'?6:5;
+    b.pulse=[8,4].find(n=>BlobBoss.pads.some(p=>{const v=operation(s.value,p.op);return v*b.sign<0&&Math.abs(v)>n;}))||4;}
+  }
+ }
+}
 function polygon(points,color){ctx.fillStyle=color;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();}
 function scene(){BlobArt.scene(ctx,{W,H,half,project,position:s.position,view:LEVEL.view,time,unit,cameraX,theme:LEVEL.theme});}
 // A stable disk of light visual particles, with no collision or pairwise physics.
@@ -230,7 +257,7 @@ function draw(){
  const mag=mix(v?v.mag:Math.abs(s.value),Math.abs(s.value),1-Math.exp(-dt*7));
  const fp=footprint(mag),margin=clamp(1-(fp.spread+fp.r)/half,.08,.95);
  cameraX=clamp(mix(v?v.cx:s.x,s.x,1-Math.exp(-dt*12)),-margin,margin);
- draws=0;armyBounds=[];armyLabels=[];scene();
+ draws=0;armyBounds=[];armyLabels=[];if(s.boss){BlobBoss.draw(ctx,W,H,s.boss,s.value,time,spriteFrames,tag);return;}scene();
  for(let i=LEVEL.rows.length-1;i>=s.next;i--){
   const row=LEVEL.rows[i],d=row.z-s.position;if(d>LEVEL.view||d<0)continue;
   if(row.type==='gate')gate(d);
@@ -253,7 +280,7 @@ function frame(ms){
  if((timings.length===300&&timings.reduce((a,b)=>a+b,0)/300>20)||(frameIntervals.length>=60&&frameIntervals.reduce((a,b)=>a+b,0)/frameIntervals.length>28)){budget=90;if(quality===1){quality=.75;resize();}}
  requestAnimationFrame(frame);
 }
-function steer(e){const rect=canvas.getBoundingClientRect();const screenX=e.clientX-rect.left;s.target=Math.max(-.76,Math.min(.76,dragCameraX+(screenX-W/2)/half));}
+function steer(e){if(s.boss){const r=canvas.getBoundingClientRect();s.boss.tx=(e.clientX-r.left-W*.5)/(W*.44);s.boss.ty=(e.clientY-r.top-H*.58)/(H*.25);return;}const rect=canvas.getBoundingClientRect();const screenX=e.clientX-rect.left;s.target=Math.max(-.76,Math.min(.76,dragCameraX+(screenX-W/2)/half));}
 canvas.addEventListener('pointerdown',e=>{if(s.mode!=='running')return;dragging=true;dragCameraX=cameraX;canvas.setPointerCapture(e.pointerId);steer(e);});
 canvas.addEventListener('pointermove',e=>{if(dragging)steer(e);});
 canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);
@@ -265,7 +292,7 @@ for(const [id,dir] of [['left',-1],['right',1]]){
 }
 addEventListener('keydown',e=>{
  if(document.querySelector('dialog[open]'))return;
- if(['ArrowLeft','ArrowRight','a','A','d','D',' '].includes(e.key))e.preventDefault();
+ if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','W','s','S','a','A','d','D',' '].includes(e.key))e.preventDefault();
  if(e.key===' '&&!e.repeat)pause();
  if((e.key==='r'||e.key==='R')&&!e.repeat)reset(true);
  keys.add(e.key);
