@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#166c7e"><title>Blob Runner — Integer Run</title><link rel="stylesheet" href="styles.css"></head><body><main id="stage">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#166c7e"><title>Integer Runner — Integer Run</title><link rel="stylesheet" href="styles.css"></head><body><main id="stage">
 <canvas id="game" aria-label="Forward scrolling signed integer swarm runner. Use left and right arrow keys or drag to steer."></canvas>
-<header><div class="brand"><strong>Blob Runner</strong><span>The Narrow Escape · Level 1</span></div><div class="tools"><button id="levels">Levels</button><button id="help">Help</button><button id="restart">Restart</button><button id="full">Fullscreen</button><button id="pause">Pause</button></div></header>
+<header><div class="brand"><strong>Integer Runner</strong><span>The Narrow Escape · Level 1</span></div><div class="tools"><button id="levels">Levels</button><button id="help">Help</button><button id="restart">Restart</button><button id="full">Fullscreen</button><button id="pause">Pause</button></div></header>
 <div id="levelHud"></div>
 <div id="notice" role="status" aria-live="polite">Look ahead. Choose your route.</div><div id="pauseVeil" hidden>Paused</div>
 <footer><div class="steering"><button id="left" aria-label="Steer left">←</button><button id="right" aria-label="Steer right">→</button></div><div class="progress" aria-label="Level progress"><i id="progress"></i></div><div class="sample">Crowd detail is representative.<br>Labels are exact.</div></footer>
-<dialog id="intro"><div class="eyebrow">Blob Runner · Integer Run</div><h1>Choose your run.</h1><p>Look ahead, steer, and keep your swarm alive. Every course has several successful routes.</p>
+<dialog id="intro"><div class="eyebrow">Integer Runner · Integer Run</div><h1>Choose your run.</h1><p>Look ahead, steer, and keep your swarm alive. Every course has several successful routes.</p>
 <label class="setting" for="levelSelect">Course<select id="levelSelect"><option value="0">1 · Riverstone Run</option><option value="1">2 · Amber Crossing</option><option value="2">3 · Twilight Rush</option></select></label>
 <label class="setting" for="difficultySelect">Pace<select id="difficultySelect"><option value="relaxed">Relaxed · more thinking time</option><option value="standard" selected>Standard · faster runner</option><option value="fast">Fast · quick decisions</option></select></label>
 <p class="menuNote">New runs shuffle left and right. Restart keeps your layout.<br>Blue = positive · Red = negative · Zero ends the run.</p><button id="begin" class="primary">Start new run</button></dialog>
