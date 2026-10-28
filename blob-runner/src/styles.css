@@ -16,3 +16,13 @@ footer{position:absolute;left:8px;right:8px;bottom:12px;gap:5px}.steering{gap:6p
 #notice{position:absolute;bottom:70px;max-width:calc(100% - 16px);font-size:11px;padding:7px 10px}
 #pauseVeil{position:absolute}dialog{width:min(440px,calc(100vw - 24px),calc(56.25dvh - 20px));max-height:90dvh;overflow:auto;padding:20px}dialog h1{font-size:25px}dialog p,dialog ul{font-size:13px}
 @container(max-width:280px){.tools button{font-size:9px}.quantity{font-size:21px}.sample{font-size:7px;max-width:80px}.progress{display:none}#notice{font-size:10px}}
+
+/* Course setup and compact in-game course status. */
+.tools{grid-template-columns:repeat(5,1fr)}
+#levelHud{position:absolute;top:55px;left:50%;transform:translateX(-50%);color:#fff;background:#153a4bd9;border:1px solid #ffffff35;border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;white-space:nowrap;pointer-events:none}
+.setting{display:block;font-size:13px;font-weight:750;margin:18px 0}
+.setting select{display:block;width:100%;font:inherit;color:#173648;background:#f0f6f7;border:1px solid #a9c4c8;border-radius:10px;padding:12px 9px;margin-top:6px;min-height:46px}
+.menuNote{font-size:12px!important;color:#4d6975}
+dialog button+button{margin-top:9px}dialog button.secondary{width:100%;background:#edf4f5;border:1px solid #bad0d4}
+#nextLevel[hidden]{display:none}
+@container(max-width:280px){#levelHud{font-size:8px;max-width:98%;overflow:hidden}.tools button{font-size:8px}}

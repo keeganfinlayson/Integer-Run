@@ -24,32 +24,58 @@
  for(let i=0;i<90;i++){const y=noise(i+5)*64,x=noise(i+6)*384,len=12+noise(i+7)*180;c.strokeStyle=i%3?'#422b1520':'#f1d29242';c.lineWidth=.5+noise(i+9);c.beginPath();c.moveTo(x,y);c.bezierCurveTo(x+len*.3,y+1,x+len*.6,y-1,x+len,y);c.stroke();}
  c.strokeStyle='#503a2eaa';c.lineWidth=2;c.beginPath();c.moveTo(0,63);c.lineTo(384,63);c.stroke();c.strokeStyle='#efd6a45a';c.beginPath();c.moveTo(0,1);c.lineTo(384,1);c.stroke();}
  const post=document.createElement('canvas');post.width=64;post.height=100;
- {const c=post.getContext('2d');block(c,7,10,50,84,'#8c9a90','#ced0b4','#526d72');c.fillStyle='#d9d7b6';c.fillRect(2,5,60,14);}
- function scene(c,{W,H,half,project,position,view,time,unit,cameraX=0}){
-  if(backdropKey!==W+','+H){backdrop=document.createElement('canvas');backdrop.width=Math.ceil(W);backdrop.height=Math.ceil(H);const c=backdrop.getContext('2d');
-  const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#a7ccd6');sky.addColorStop(.28,'#d4e5dc');sky.addColorStop(.6,'#3d8fa3');sky.addColorStop(1,'#236879');c.fillStyle=sky;c.fillRect(0,0,W,H);
-  const water=c.createLinearGradient(0,H*.19,0,H);water.addColorStop(0,'#5599aa');water.addColorStop(.5,'#27798e');water.addColorStop(1,'#205d74');c.fillStyle=water;c.fillRect(0,H*.19,W,H*.81);
+ {const c=post.getContext('2d');
+  poly(c,[{x:9,y:19},{x:45,y:19},{x:45,y:94},{x:9,y:94}],'#879689');
+  poly(c,[{x:45,y:19},{x:57,y:10},{x:57,y:84},{x:45,y:94}],'#536e70');
+  poly(c,[{x:4,y:12},{x:44,y:12},{x:44,y:25},{x:4,y:25}],'#c4c8a8');
+  poly(c,[{x:44,y:12},{x:62,y:2},{x:62,y:15},{x:44,y:25}],'#84968a');
+  poly(c,[{x:4,y:12},{x:21,y:2},{x:62,y:2},{x:44,y:12}],'#e3dfbc');
+  c.fillStyle='#425b5d30';c.fillRect(13,52,29,2);c.fillRect(13,77,29,2);
+ }
+ const palettes=[
+  {sky:'#9acbdc',haze:'#dfecda',water:'#378da4',deep:'#164c68',rock:'#778f87',side:'#466775',top:'#97b19b',leaf:'#386b5d'},
+  {sky:'#c9b9a2',haze:'#f8dab1',water:'#438da0',deep:'#254d66',rock:'#bb956e',side:'#80634d',top:'#dfbc89',leaf:'#697e57'},
+  {sky:'#37496d',haze:'#a7a5ba',water:'#536c9b',deep:'#223454',rock:'#737f9b',side:'#485776',top:'#a1a6bc',leaf:'#4b6178'}
+ ];
+ const islets=new Map();
+ function islet(theme){if(islets.has(theme))return islets.get(theme);const p=palettes[theme],a=document.createElement('canvas');a.width=240;a.height=300;const c=a.getContext('2d');
+  c.fillStyle='#092d4440';c.beginPath();c.ellipse(120,279,112,14,0,0,TAU);c.fill();
+  poly(c,[{x:25,y:120},{x:118,y:99},{x:145,y:274},{x:59,y:281}],p.rock);
+  poly(c,[{x:118,y:99},{x:205,y:129},{x:184,y:271},{x:145,y:274}],p.side);
+  poly(c,[{x:25,y:120},{x:73,y:92},{x:162,y:95},{x:205,y:129},{x:118,y:144}],p.top);
+  poly(c,[{x:63,y:159},{x:85,y:149},{x:80,y:249},{x:68,y:268}],'#e9e6c71c');
+  poly(c,[{x:152,y:153},{x:174,y:156},{x:163,y:260},{x:152,y:263}],'#142f412e');
+  for(const [x,y,r] of [[68,94,32],[125,95,42],[160,112,25]]){c.fillStyle=p.leaf;c.beginPath();c.ellipse(x,y,r,r*.33,0,0,TAU);c.fill();}
+  for(const [x,y,r] of [[90,55,31],[141,74,23]]){
+   c.fillStyle='#475650';c.fillRect(x-3,y+20,6,28);
+   poly(c,[{x,y:y-r*1.5},{x:x-r,y:y+r},{x:x+r,y:y+r}],p.leaf);
+   poly(c,[{x,y:y-r*1.5},{x:x-r,y:y+r},{x,y:y+r*.7}],theme===2?'#80908f':'#5a8a69');
+  }
+  c.strokeStyle='#caf1e64a';c.lineWidth=3;c.beginPath();c.ellipse(120,283,100,9,0,0,TAU);c.stroke();islets.set(theme,a);return a;
+ }
+
+ function scene(c,{W,H,half,project,position,view,time,unit,cameraX=0,theme=0}){
+  const palette=palettes[theme];
+  if(backdropKey!==W+','+H+','+theme){backdrop=document.createElement('canvas');backdrop.width=Math.ceil(W);backdrop.height=Math.ceil(H);const c=backdrop.getContext('2d');
+  const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,palette.sky);sky.addColorStop(.28,palette.haze);sky.addColorStop(.6,palette.water);sky.addColorStop(1,palette.deep);c.fillStyle=sky;c.fillRect(0,0,W,H);
+  const water=c.createLinearGradient(0,H*.19,0,H);water.addColorStop(0,palette.water);water.addColorStop(1,palette.deep);c.fillStyle=water;c.fillRect(0,H*.19,W,H*.81);
   // Quiet rocky shores outside the roadway; the road stays visually uncluttered.
   for(const side of [-1,1]){
    const edge=side<0?0:W;const dir=-side;
-   poly(c,[{x:edge,y:H*.18},{x:edge+dir*W*.14,y:H*.16},{x:edge+dir*W*.26,y:H*.26},{x:edge+dir*W*.20,y:H*.39},{x:edge,y:H*.43}],'#758f8d');
-   poly(c,[{x:edge,y:H*.17},{x:edge+dir*W*.13,y:H*.145},{x:edge+dir*W*.25,y:H*.255},{x:edge+dir*W*.12,y:H*.29},{x:edge,y:H*.28}],'#6c977f');
-   poly(c,[{x:edge+dir*W*.08,y:H*.3},{x:edge+dir*W*.15,y:H*.285},{x:edge+dir*W*.20,y:H*.30},{x:edge+dir*W*.17,y:H*.355},{x:edge+dir*W*.09,y:H*.37}],'#9bada0');
-   for(let i=0;i<4;i++){const x=edge+dir*W*(.025+i*.047),y=H*(.17+i*.013),r=W*.022;poly(c,[{x,y:y-r*2},{x:x-r,y:y+r},{x:x+r,y:y+r}],'#527b6d');}
+   poly(c,[{x:edge,y:H*.18},{x:edge+dir*W*.14,y:H*.16},{x:edge+dir*W*.26,y:H*.26},{x:edge+dir*W*.20,y:H*.39},{x:edge,y:H*.43}],palette.rock);
+   poly(c,[{x:edge,y:H*.17},{x:edge+dir*W*.13,y:H*.145},{x:edge+dir*W*.25,y:H*.255},{x:edge+dir*W*.12,y:H*.29},{x:edge,y:H*.28}],palette.leaf);
+   poly(c,[{x:edge+dir*W*.08,y:H*.3},{x:edge+dir*W*.15,y:H*.285},{x:edge+dir*W*.20,y:H*.30},{x:edge+dir*W*.17,y:H*.355},{x:edge+dir*W*.09,y:H*.37}],palette.top);
+   for(let i=0;i<4;i++){const x=edge+dir*W*(.025+i*.047),y=H*(.17+i*.013),r=W*.022;poly(c,[{x,y:y-r*2},{x:x-r,y:y+r},{x:x+r,y:y+r}],palette.leaf);}
   }
-   backdropKey=W+','+H;
+   backdropKey=W+','+H+','+theme;
   }
   // Distant scenery shifts less than nearby road edges: translational parallax.
   c.drawImage(backdrop,-W*.08-cameraX*W*.075,0,W*1.16,H);
-  // Low-cost faceted rock stacks give the bridge real surrounding depth.
-  for(let d=Math.floor((position+view)/210)*210-position;d>-200;d-=210){
-   for(const side of [-1,1]){
-    const index=Math.round((d+position)/210),p=project(side*(1.75+noise(index+side*9)*.5),d);
-    const width=(35+noise(index+8)*25)*p.sc*unit,height=(65+noise(index+11)*75)*p.sc*unit;
-    poly(c,[{x:p.x-width,y:p.y},{x:p.x-width*.8,y:p.y-height},{x:p.x+width*.25,y:p.y-height*1.04},{x:p.x+width*.55,y:p.y}], '#718b87');
-    poly(c,[{x:p.x+width*.25,y:p.y-height*1.04},{x:p.x+width,y:p.y-height*.86},{x:p.x+width,y:p.y},{x:p.x+width*.55,y:p.y}], '#506e75');
-    poly(c,[{x:p.x-width*.8,y:p.y-height},{x:p.x-width*.35,y:p.y-height*1.13},{x:p.x+width,y:p.y-height*.86},{x:p.x+width*.25,y:p.y-height*1.04}], '#a5b6a0');
-    c.fillStyle='#78977d';c.beginPath();c.ellipse(p.x-width*.15,p.y-height*1.035,width*.65,width*.16,0,0,TAU);c.fill();
+  // Cached planted islets, rooted at the water plane. Their scaled faces and
+  // parallax make forward travel visible without detailed 3D meshes.
+  for(let d=Math.floor((position+view)/290)*290-position;d>-220;d-=290){
+   for(const side of [-1,1]){const id=Math.round((d+position)/290),p=project(side*(1.8+noise(id+side*7)*.55),d),width=125*p.sc*unit,height=width*1.25;
+    c.drawImage(islet(theme),p.x-width/2,p.y-height*.96,width,height);
    }
   }
   c.lineCap='round';for(let i=0;i<14;i++){const y=H*(.28+i*.054),x=noise(i+8)*W+Math.sin(time*.32+i)*W*.006,w=(9+noise(i+20)*23)*unit;c.strokeStyle=i%3?'#b6e3dc30':'#e3eee55c';c.lineWidth=i%3?1:1.8;c.beginPath();c.moveTo(x,y);c.lineTo(x+w,y);c.stroke();}
@@ -62,6 +88,7 @@
   // Cached grain mapped in receding board strips; no per-frame grain generation.
   c.save();c.beginPath();c.moveTo(back.x-half*back.sc,back.y);c.lineTo(back.x+half*back.sc,back.y);c.lineTo(front.x+half*front.sc,front.y);c.lineTo(front.x-half*front.sc,front.y);c.closePath();c.clip();
   for(let d=Math.ceil((position-160)/32)*32-position;d<view;d+=32){const id=Math.round((d+position)/32),a=project(-1,d),b=project(1,d),far=project(0,d+32);c.drawImage(plank,a.x,far.y,b.x-a.x,Math.max(1,a.y-far.y+1));if(id%3===0){c.fillStyle='#654c2e0a';c.fillRect(a.x,far.y,b.x-a.x,a.y-far.y+1);}}
+  if(theme===2){c.fillStyle='#21325520';c.fillRect(0,0,W,H);}
   c.restore();
   // Raised parapets: lit top, shaded wall, and world-anchored segment seams.
   for(const side of [-1,1]){

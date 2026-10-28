@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#166c7e"><title>Blob Runner — The Narrow Escape</title><style>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#166c7e"><title>Blob Runner — Integer Run</title><style>
 :root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#173648;background:#bbdfdf;font-synthesis:none}*{box-sizing:border-box}body{margin:0;overflow:hidden}button{font:inherit;cursor:pointer;border:1px solid #b7ced0;border-radius:12px;padding:10px 14px;background:#fffffff2;color:#173648;font-weight:750;min-height:44px}button:hover{background:#e6f7f6}button:focus-visible{outline:3px solid #ffb839;outline-offset:3px}canvas{display:block;width:100vw;height:100dvh;touch-action:none}header{position:fixed;top:max(12px,env(safe-area-inset-top));left:16px;right:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}.brand{background:#ffffffed;padding:9px 14px;border-radius:14px;box-shadow:0 3px 12px #204e5620}.brand strong{display:block;font-size:18px;letter-spacing:-.5px}.brand span{font-size:11px;letter-spacing:1.4px;text-transform:uppercase}.tools{display:flex;gap:6px;pointer-events:auto}.tools button{padding:9px 12px}.quantity{position:fixed;left:50%;top:78px;transform:translateX(-50%);padding:7px 22px;border:2px solid white;border-radius:18px;color:white;background:#0876cb;font-size:30px;font-weight:850;font-variant-numeric:tabular-nums;box-shadow:0 4px 18px #17364828}.quantity small{display:block;text-align:center;font-size:9px;letter-spacing:1.3px;text-transform:uppercase}.negative{background:#d23e57}.zero{background:#536d7c}#notice{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);width:max-content;max-width:92vw;padding:9px 16px;border-radius:12px;background:#fffffff2;color:#173648;text-align:center;font-weight:650;font-size:14px;box-shadow:0 3px 14px #1736481a;pointer-events:none}footer{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));left:16px;right:16px;display:flex;align-items:center;justify-content:space-between;gap:8px}.steering{display:flex;gap:10px}.steering button{width:62px;font-size:25px;padding:3px 12px;touch-action:none;user-select:none}.progress{width:180px;max-width:32vw;height:5px;background:#ffffff75;border-radius:8px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:#245d69}.sample{font-size:10px;text-align:right;color:#214c5b;background:#ffffffc9;border-radius:8px;padding:5px 8px;max-width:155px}dialog{border:0;border-radius:24px;padding:28px;max-width:480px;width:calc(100vw - 32px);color:#173648;box-shadow:0 22px 90px #16344940}dialog::backdrop{background:#16344980;backdrop-filter:blur(4px)}dialog h1{font-size:30px;letter-spacing:-1px;margin:6px 0 10px}dialog p{line-height:1.5;font-size:15px}dialog .eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#507f88}dialog button.primary{background:#166c7e;color:white;border:0;padding:12px 20px;width:100%}dialog ul{padding-left:20px;line-height:1.6;font-size:14px}.key{border:1px solid #b7ced0;border-radius:4px;padding:0 4px}#history{font-size:12px;padding:10px 13px;background:#edf5f4;border-radius:12px;line-height:1.7;max-height:160px;overflow:auto}#pauseVeil{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;background:#17364820;font-size:32px;font-weight:800;color:white;text-shadow:0 2px 5px #173648}#pauseVeil[hidden]{display:none}@media(max-width:600px){header{left:8px;right:8px;top:8px}.brand{padding:8px 10px}.brand strong{font-size:14px}.brand span{font-size:8px}.tools{gap:4px}.tools button{font-size:11px;padding:8px;min-height:42px;border-radius:9px}.quantity{top:68px;font-size:25px;padding:4px 18px}footer{left:10px;right:10px}.sample{max-width:105px;font-size:9px}.progress{max-width:23vw}#notice{font-size:12px;bottom:78px;padding:8px 12px}}@media(max-height:500px){.quantity{top:62px;left:66px;font-size:22px}#notice{bottom:67px;font-size:12px}.brand span{display:none}dialog{padding:18px;max-height:94dvh;overflow:auto}}
 @media(max-width:600px){.brand{flex-shrink:0;padding:10px 8px}.brand strong{font-size:12px;white-space:nowrap}.brand span{display:none}header{gap:4px}}
 @media(max-height:500px){#notice{bottom:14px;max-width:55vw;font-size:11px;padding:6px 10px}.progress{visibility:hidden}}
@@ -19,14 +19,28 @@ footer{position:absolute;left:8px;right:8px;bottom:12px;gap:5px}.steering{gap:6p
 #pauseVeil{position:absolute}dialog{width:min(440px,calc(100vw - 24px),calc(56.25dvh - 20px));max-height:90dvh;overflow:auto;padding:20px}dialog h1{font-size:25px}dialog p,dialog ul{font-size:13px}
 @container(max-width:280px){.tools button{font-size:9px}.quantity{font-size:21px}.sample{font-size:7px;max-width:80px}.progress{display:none}#notice{font-size:10px}}
 
+/* Course setup and compact in-game course status. */
+.tools{grid-template-columns:repeat(5,1fr)}
+#levelHud{position:absolute;top:55px;left:50%;transform:translateX(-50%);color:#fff;background:#153a4bd9;border:1px solid #ffffff35;border-radius:20px;padding:5px 10px;font-size:10px;font-weight:700;white-space:nowrap;pointer-events:none}
+.setting{display:block;font-size:13px;font-weight:750;margin:18px 0}
+.setting select{display:block;width:100%;font:inherit;color:#173648;background:#f0f6f7;border:1px solid #a9c4c8;border-radius:10px;padding:12px 9px;margin-top:6px;min-height:46px}
+.menuNote{font-size:12px!important;color:#4d6975}
+dialog button+button{margin-top:9px}dialog button.secondary{width:100%;background:#edf4f5;border:1px solid #bad0d4}
+#nextLevel[hidden]{display:none}
+@container(max-width:280px){#levelHud{font-size:8px;max-width:98%;overflow:hidden}.tools button{font-size:8px}}
+
 </style></head><body><main id="stage">
 <canvas id="game" aria-label="Forward scrolling signed integer swarm runner. Use left and right arrow keys or drag to steer."></canvas>
-<header><div class="brand"><strong>Blob Runner</strong><span>The Narrow Escape · Level 1</span></div><div class="tools"><button id="help">Help</button><button id="restart">Restart</button><button id="full">Fullscreen</button><button id="pause">Pause</button></div></header>
+<header><div class="brand"><strong>Blob Runner</strong><span>The Narrow Escape · Level 1</span></div><div class="tools"><button id="levels">Levels</button><button id="help">Help</button><button id="restart">Restart</button><button id="full">Fullscreen</button><button id="pause">Pause</button></div></header>
+<div id="levelHud"></div>
 <div id="notice" role="status" aria-live="polite">Look ahead. Choose your route.</div><div id="pauseVeil" hidden>Paused</div>
 <footer><div class="steering"><button id="left" aria-label="Steer left">←</button><button id="right" aria-label="Steer right">→</button></div><div class="progress" aria-label="Level progress"><i id="progress"></i></div><div class="sample">Crowd detail is representative.<br>Labels are exact.</div></footer>
-<dialog id="intro"><div class="eyebrow">Signed integer strategy</div><h1>A small swarm.<br>A narrow escape.</h1><p>Read the circles and look ahead. Steer as swarms approach, become positive to pass the blue stone gate, then reach the single gate with <strong>0 &lt; |value| &lt; 6</strong>.</p><p>Blue is positive. Red is negative. A blue stone gate admits positive armies. Same signs join; opposite signs cancel. Zero ends your run.</p><p>Steer with <span class="key">←</span> <span class="key">→</span>, A/D, or drag across the road.</p><button id="begin" class="primary">Start level</button></dialog>
-<dialog id="helpDialog"><div class="eyebrow">How to play</div><h1>Look ahead. Then steer.</h1><ul><li>Use arrows, A/D, bottom arrows, or drag left/right. At operation circles, the nearest lane is selected.</li><li>Operation circles change your exact value. Negative multiplication reverses color.</li><li>Both incoming swarms move toward your group. Front contact determines which interacts first; the other keeps approaching.</li><li>Same signs join. Opposite signs cancel at their point of front contact; equal quantities disappear together.</li><li>If your army reaches zero at any point, you lose, even if the opposing army has survivors. The blue stone gate spans the road and admits positive armies only. Choose the sign you need using the operation circles before it.</li><li>The final gate requires <strong>|value| &lt; 6</strong>. The final lanes rejoin automatically. The entire swarm either passes or stops.</li><li>Space pauses; R restarts. Escape closes Help. Fullscreen depends on browser support.</li></ul><button id="closeHelp" class="primary">Back to game</button></dialog>
-<dialog id="result"><div class="eyebrow" id="resultTag"></div><h1 id="resultTitle"></h1><p id="resultText"></p><div id="history"></div><p></p><button id="again" class="primary">Try again</button></dialog>
+<dialog id="intro"><div class="eyebrow">Blob Runner · Integer Run</div><h1>Choose your run.</h1><p>Look ahead, steer, and keep your swarm alive. Every course has several successful routes.</p>
+<label class="setting" for="levelSelect">Course<select id="levelSelect"><option value="0">1 · Riverstone Run</option><option value="1">2 · Amber Crossing</option><option value="2">3 · Twilight Rush</option></select></label>
+<label class="setting" for="difficultySelect">Pace<select id="difficultySelect"><option value="relaxed">Relaxed · more thinking time</option><option value="standard" selected>Standard · faster runner</option><option value="fast">Fast · quick decisions</option></select></label>
+<p class="menuNote">New runs shuffle left and right. Restart keeps your layout.<br>Blue = positive · Red = negative · Zero ends the run.</p><button id="begin" class="primary">Start new run</button></dialog>
+<dialog id="helpDialog"><div class="eyebrow">How to play</div><h1>Look ahead. Then steer.</h1><ul><li>Use arrows, A/D, bottom arrows, or drag left/right. At operation circles, the nearest lane is selected.</li><li>Operation circles change your exact value. Negative multiplication reverses color.</li><li>Both incoming swarms move toward your group. Front contact determines which interacts first; the other keeps approaching.</li><li>Same signs join. Opposite signs cancel at their point of front contact; equal quantities disappear together.</li><li>If your army reaches zero at any point, you lose, even if the opposing army has survivors. Sign gates span the road. Blue gates say POSITIVE +; red gates say NEGATIVE −. Choose an earlier operation that gives you the required sign.</li><li>The final gate requires <strong>0 &lt; |value| &lt; 5</strong>. The final lanes rejoin automatically. The entire swarm either passes or stops.</li><li>Levels lets you choose a course and pace. Start new run shuffles operations and the first incoming pair. Restart repeats the current layout.</li><li>Space pauses; R restarts. Escape closes Help. Fullscreen depends on browser support.</li></ul><button id="closeHelp" class="primary">Back to game</button></dialog>
+<dialog id="result"><div class="eyebrow" id="resultTag"></div><h1 id="resultTitle"></h1><p id="resultText"></p><div id="history"></div><p></p><button id="nextLevel" class="primary" hidden>Next course →</button><button id="again" class="primary">Retry this layout</button><button id="chooseLevel" class="secondary">Choose course &amp; pace</button></dialog>
 <script>
 /* Exact integer state; independent of rendering. Browser and Node compatible. */
 (function(root){
@@ -53,18 +67,59 @@ function cancellation(a,b,progress){
 }
 const fits=(n,capacity)=>Number.isSafeInteger(n)&&n!==0&&Math.abs(n)<capacity;
 const signAllowed=(n,sign)=>Number.isSafeInteger(n)&&n!==0&&Math.sign(n)===sign;
-const LEVEL={name:'The Narrow Escape',start:24,speed:52,view:820,capacity:6,
- rows:[
- {id:'start',z:180,type:'pads',title:'Choose your starting operation',items:[{x:-.52,label:'×(−2)',op:{kind:'mul',n:-2}},{x:.52,label:'+16',op:{kind:'add',n:16}}]},
- {id:'approach',z:450,type:'incoming',title:'Both swarms approach',items:[{id:'red',x:-.52,v:-20},{id:'blue',x:.52,v:48}]},
- {id:'arrivals',z:640,type:'incomingProgress',title:'Interactions follow front contact'},
- {id:'field',z:850,type:'pads',title:'Choose your sign before the forcefield',field:{z:950,sign:1},items:[{x:-.52,label:'×(−1)',op:{kind:'mul',n:-1}},{x:.52,label:'×(+1)',op:{kind:'mul',n:1}}]},
- {id:'trim',z:1060,type:'pads',title:'Prepare for −4',items:[{x:-.52,label:'−12',op:{kind:'sub',n:12}},{x:.52,label:'+12',op:{kind:'add',n:12}}]},
- {id:'lastSwarm',z:1250,type:'swarm',title:'Encounter −4',v:-4},
- {id:'final',z:1470,type:'pads',title:'One circle fits the gate',items:[{x:-.52,label:'÷2',op:{kind:'div',n:2}},{x:.52,label:'×(−2)',op:{kind:'mul',n:-2}}]},
- {id:'gate',z:1580,type:'gate',title:'Only |value| < 6 fits',capacity:6}
- ]};
-const api={signed,operation,encounter,cancellation,fits,signAllowed,LEVEL};
+// Course plans use multiples of four so every final division is exact.
+// The order and arithmetic are designed first; only lateral placement is shuffled.
+const DIFFICULTIES={relaxed:{name:'Relaxed',speed:70},standard:{name:'Standard',speed:88},fast:{name:'Fast',speed:108}};
+const LEVELS=[
+ {name:'Riverstone Run',start:24,red:-20,blue:48,trim:[12,52],length:3100,theme:0},
+ {name:'Amber Crossing',start:40,red:-28,blue:80,trim:[20,92],length:3700,theme:1},
+ {name:'Twilight Rush',start:56,red:-36,blue:112,trim:[28,132],length:4300,theme:2}
+];
+function random(seed){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+function makeLevel(index=0,seed=1,difficulty='standard'){
+ const spec=LEVELS[index];if(!spec)throw Error('Unknown level');
+ const rng=random(seed),scale=spec.length/3100;
+ const op=(label,kind,n)=>({label,op:{kind,n}});
+ const pads=(id,z,title,items)=>({id,z:z*scale,type:'pads',title,items});
+ let rows=[
+  pads('start',210,'Choose your opening move',[op('×(−2)','mul',-2),op('+8','add',8)]),
+  {id:'pair',z:620*scale,hold:870*scale,type:'incoming',title:'Choose which swarm reaches you first',items:[{id:'red',v:spec.red},{id:'blue',v:spec.blue}]},
+  pads('positiveChoice',1070,'The blue gate needs a positive swarm',[op('×(−1)','mul',-1),op('×(+1)','mul',1)]),
+  {id:'positiveGate',z:1270*scale,type:'signGate',sign:1,title:'POSITIVE +'},
+  pads('trim',1500,'Choose how much to subtract',spec.trim.map(n=>op('−'+n,'sub',n))),
+ ];
+ if(index>0)rows.push(pads('reshape',1660,index===1?'Grow or stay?':'Plan for the red swarm',index===1?[op('×1','mul',1),op('×2','mul',2)]:[op('×2','mul',2),op('+4','add',4)]));
+ rows.push(
+  {id:'lastSwarm',z:1850*scale,hold:1980*scale,type:'swarm',title:'Meet −4',v:-4},
+  pads('negativeChoice',2150,'The red gate needs a negative swarm',[op('×(−1)','mul',-1),op('−16','sub',16)]),
+  {id:'negativeGate',z:2360*scale,type:'signGate',sign:-1,title:'NEGATIVE −'},
+  pads('recover',2580,'Find a small nonzero value',[op('+8','add',8),op(index===1?'+24':'+16','add',index===1?24:16)]),
+  pads('final',2870,'One last operation before the size gate',[op('÷4','div',4),op('×(−2)','mul',-2)]),
+  {id:'gate',z:spec.length,type:'gate',title:'Finish with 0 < |value| < 5',capacity:5}
+ );
+ for(const row of rows){if(!row.items)continue;if(rng()<.5)row.items.reverse();row.items.forEach((it,i)=>it.x=i? .52:-.52);}
+ return {...spec,index,seed,difficulty,speed:DIFFICULTIES[difficulty].speed,view:1100,capacity:5,rows};
+}
+// Enumerate operation choices and both encounter orders; exhausted players never
+// inherit an enemy's survivors. Returned traces also support browser route tests.
+function solve(level){
+ let states=[{value:level.start,actions:[],trace:[level.start]}],failures={zero:0,sign:0,size:0,integer:0};
+ const hit=(a,b)=>a*b<0&&Math.abs(a)<=Math.abs(b)?0:encounter(a,b);
+ for(const row of level.rows){const next=[];
+  for(const state of states){
+   const emit=(value,action)=>{if(value===0){failures.zero++;return;}next.push({value,actions:action?[...state.actions,{row:row.id,...action}]:state.actions,trace:[...state.trace,value]});};
+   if(row.type==='pads'){for(const it of row.items){try{emit(operation(state.value,it.op),{label:it.label,x:it.x});}catch(e){failures.integer++;}}}
+   else if(row.type==='incoming'){
+    for(const order of [row.items,[...row.items].reverse()]){let v=state.value;for(const it of order){v=hit(v,it.v);if(v===0)break;}emit(v,{order:order.map(it=>it.id),x:order[0].x});}
+   }else if(row.type==='swarm')emit(hit(state.value,row.v));
+   else if(row.type==='signGate'){if(signAllowed(state.value,row.sign))emit(state.value);else failures.sign++;}
+   else if(row.type==='gate'){if(fits(state.value,row.capacity))emit(state.value);else failures.size++;}
+  }states=next;
+ }
+ return {wins:states,failures};
+}
+const LEVEL=makeLevel();
+const api={signed,operation,encounter,cancellation,fits,signAllowed,LEVEL,LEVELS,DIFFICULTIES,makeLevel,solve};
 if(typeof module!=='undefined')module.exports=api;else root.BlobMath=api;
 })(typeof window!=='undefined'?window:globalThis);
 
@@ -95,32 +150,58 @@ if(typeof module!=='undefined')module.exports=api;else root.BlobMath=api;
  for(let i=0;i<90;i++){const y=noise(i+5)*64,x=noise(i+6)*384,len=12+noise(i+7)*180;c.strokeStyle=i%3?'#422b1520':'#f1d29242';c.lineWidth=.5+noise(i+9);c.beginPath();c.moveTo(x,y);c.bezierCurveTo(x+len*.3,y+1,x+len*.6,y-1,x+len,y);c.stroke();}
  c.strokeStyle='#503a2eaa';c.lineWidth=2;c.beginPath();c.moveTo(0,63);c.lineTo(384,63);c.stroke();c.strokeStyle='#efd6a45a';c.beginPath();c.moveTo(0,1);c.lineTo(384,1);c.stroke();}
  const post=document.createElement('canvas');post.width=64;post.height=100;
- {const c=post.getContext('2d');block(c,7,10,50,84,'#8c9a90','#ced0b4','#526d72');c.fillStyle='#d9d7b6';c.fillRect(2,5,60,14);}
- function scene(c,{W,H,half,project,position,view,time,unit,cameraX=0}){
-  if(backdropKey!==W+','+H){backdrop=document.createElement('canvas');backdrop.width=Math.ceil(W);backdrop.height=Math.ceil(H);const c=backdrop.getContext('2d');
-  const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#a7ccd6');sky.addColorStop(.28,'#d4e5dc');sky.addColorStop(.6,'#3d8fa3');sky.addColorStop(1,'#236879');c.fillStyle=sky;c.fillRect(0,0,W,H);
-  const water=c.createLinearGradient(0,H*.19,0,H);water.addColorStop(0,'#5599aa');water.addColorStop(.5,'#27798e');water.addColorStop(1,'#205d74');c.fillStyle=water;c.fillRect(0,H*.19,W,H*.81);
+ {const c=post.getContext('2d');
+  poly(c,[{x:9,y:19},{x:45,y:19},{x:45,y:94},{x:9,y:94}],'#879689');
+  poly(c,[{x:45,y:19},{x:57,y:10},{x:57,y:84},{x:45,y:94}],'#536e70');
+  poly(c,[{x:4,y:12},{x:44,y:12},{x:44,y:25},{x:4,y:25}],'#c4c8a8');
+  poly(c,[{x:44,y:12},{x:62,y:2},{x:62,y:15},{x:44,y:25}],'#84968a');
+  poly(c,[{x:4,y:12},{x:21,y:2},{x:62,y:2},{x:44,y:12}],'#e3dfbc');
+  c.fillStyle='#425b5d30';c.fillRect(13,52,29,2);c.fillRect(13,77,29,2);
+ }
+ const palettes=[
+  {sky:'#9acbdc',haze:'#dfecda',water:'#378da4',deep:'#164c68',rock:'#778f87',side:'#466775',top:'#97b19b',leaf:'#386b5d'},
+  {sky:'#c9b9a2',haze:'#f8dab1',water:'#438da0',deep:'#254d66',rock:'#bb956e',side:'#80634d',top:'#dfbc89',leaf:'#697e57'},
+  {sky:'#37496d',haze:'#a7a5ba',water:'#536c9b',deep:'#223454',rock:'#737f9b',side:'#485776',top:'#a1a6bc',leaf:'#4b6178'}
+ ];
+ const islets=new Map();
+ function islet(theme){if(islets.has(theme))return islets.get(theme);const p=palettes[theme],a=document.createElement('canvas');a.width=240;a.height=300;const c=a.getContext('2d');
+  c.fillStyle='#092d4440';c.beginPath();c.ellipse(120,279,112,14,0,0,TAU);c.fill();
+  poly(c,[{x:25,y:120},{x:118,y:99},{x:145,y:274},{x:59,y:281}],p.rock);
+  poly(c,[{x:118,y:99},{x:205,y:129},{x:184,y:271},{x:145,y:274}],p.side);
+  poly(c,[{x:25,y:120},{x:73,y:92},{x:162,y:95},{x:205,y:129},{x:118,y:144}],p.top);
+  poly(c,[{x:63,y:159},{x:85,y:149},{x:80,y:249},{x:68,y:268}],'#e9e6c71c');
+  poly(c,[{x:152,y:153},{x:174,y:156},{x:163,y:260},{x:152,y:263}],'#142f412e');
+  for(const [x,y,r] of [[68,94,32],[125,95,42],[160,112,25]]){c.fillStyle=p.leaf;c.beginPath();c.ellipse(x,y,r,r*.33,0,0,TAU);c.fill();}
+  for(const [x,y,r] of [[90,55,31],[141,74,23]]){
+   c.fillStyle='#475650';c.fillRect(x-3,y+20,6,28);
+   poly(c,[{x,y:y-r*1.5},{x:x-r,y:y+r},{x:x+r,y:y+r}],p.leaf);
+   poly(c,[{x,y:y-r*1.5},{x:x-r,y:y+r},{x,y:y+r*.7}],theme===2?'#80908f':'#5a8a69');
+  }
+  c.strokeStyle='#caf1e64a';c.lineWidth=3;c.beginPath();c.ellipse(120,283,100,9,0,0,TAU);c.stroke();islets.set(theme,a);return a;
+ }
+
+ function scene(c,{W,H,half,project,position,view,time,unit,cameraX=0,theme=0}){
+  const palette=palettes[theme];
+  if(backdropKey!==W+','+H+','+theme){backdrop=document.createElement('canvas');backdrop.width=Math.ceil(W);backdrop.height=Math.ceil(H);const c=backdrop.getContext('2d');
+  const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,palette.sky);sky.addColorStop(.28,palette.haze);sky.addColorStop(.6,palette.water);sky.addColorStop(1,palette.deep);c.fillStyle=sky;c.fillRect(0,0,W,H);
+  const water=c.createLinearGradient(0,H*.19,0,H);water.addColorStop(0,palette.water);water.addColorStop(1,palette.deep);c.fillStyle=water;c.fillRect(0,H*.19,W,H*.81);
   // Quiet rocky shores outside the roadway; the road stays visually uncluttered.
   for(const side of [-1,1]){
    const edge=side<0?0:W;const dir=-side;
-   poly(c,[{x:edge,y:H*.18},{x:edge+dir*W*.14,y:H*.16},{x:edge+dir*W*.26,y:H*.26},{x:edge+dir*W*.20,y:H*.39},{x:edge,y:H*.43}],'#758f8d');
-   poly(c,[{x:edge,y:H*.17},{x:edge+dir*W*.13,y:H*.145},{x:edge+dir*W*.25,y:H*.255},{x:edge+dir*W*.12,y:H*.29},{x:edge,y:H*.28}],'#6c977f');
-   poly(c,[{x:edge+dir*W*.08,y:H*.3},{x:edge+dir*W*.15,y:H*.285},{x:edge+dir*W*.20,y:H*.30},{x:edge+dir*W*.17,y:H*.355},{x:edge+dir*W*.09,y:H*.37}],'#9bada0');
-   for(let i=0;i<4;i++){const x=edge+dir*W*(.025+i*.047),y=H*(.17+i*.013),r=W*.022;poly(c,[{x,y:y-r*2},{x:x-r,y:y+r},{x:x+r,y:y+r}],'#527b6d');}
+   poly(c,[{x:edge,y:H*.18},{x:edge+dir*W*.14,y:H*.16},{x:edge+dir*W*.26,y:H*.26},{x:edge+dir*W*.20,y:H*.39},{x:edge,y:H*.43}],palette.rock);
+   poly(c,[{x:edge,y:H*.17},{x:edge+dir*W*.13,y:H*.145},{x:edge+dir*W*.25,y:H*.255},{x:edge+dir*W*.12,y:H*.29},{x:edge,y:H*.28}],palette.leaf);
+   poly(c,[{x:edge+dir*W*.08,y:H*.3},{x:edge+dir*W*.15,y:H*.285},{x:edge+dir*W*.20,y:H*.30},{x:edge+dir*W*.17,y:H*.355},{x:edge+dir*W*.09,y:H*.37}],palette.top);
+   for(let i=0;i<4;i++){const x=edge+dir*W*(.025+i*.047),y=H*(.17+i*.013),r=W*.022;poly(c,[{x,y:y-r*2},{x:x-r,y:y+r},{x:x+r,y:y+r}],palette.leaf);}
   }
-   backdropKey=W+','+H;
+   backdropKey=W+','+H+','+theme;
   }
   // Distant scenery shifts less than nearby road edges: translational parallax.
   c.drawImage(backdrop,-W*.08-cameraX*W*.075,0,W*1.16,H);
-  // Low-cost faceted rock stacks give the bridge real surrounding depth.
-  for(let d=Math.floor((position+view)/210)*210-position;d>-200;d-=210){
-   for(const side of [-1,1]){
-    const index=Math.round((d+position)/210),p=project(side*(1.75+noise(index+side*9)*.5),d);
-    const width=(35+noise(index+8)*25)*p.sc*unit,height=(65+noise(index+11)*75)*p.sc*unit;
-    poly(c,[{x:p.x-width,y:p.y},{x:p.x-width*.8,y:p.y-height},{x:p.x+width*.25,y:p.y-height*1.04},{x:p.x+width*.55,y:p.y}], '#718b87');
-    poly(c,[{x:p.x+width*.25,y:p.y-height*1.04},{x:p.x+width,y:p.y-height*.86},{x:p.x+width,y:p.y},{x:p.x+width*.55,y:p.y}], '#506e75');
-    poly(c,[{x:p.x-width*.8,y:p.y-height},{x:p.x-width*.35,y:p.y-height*1.13},{x:p.x+width,y:p.y-height*.86},{x:p.x+width*.25,y:p.y-height*1.04}], '#a5b6a0');
-    c.fillStyle='#78977d';c.beginPath();c.ellipse(p.x-width*.15,p.y-height*1.035,width*.65,width*.16,0,0,TAU);c.fill();
+  // Cached planted islets, rooted at the water plane. Their scaled faces and
+  // parallax make forward travel visible without detailed 3D meshes.
+  for(let d=Math.floor((position+view)/290)*290-position;d>-220;d-=290){
+   for(const side of [-1,1]){const id=Math.round((d+position)/290),p=project(side*(1.8+noise(id+side*7)*.55),d),width=125*p.sc*unit,height=width*1.25;
+    c.drawImage(islet(theme),p.x-width/2,p.y-height*.96,width,height);
    }
   }
   c.lineCap='round';for(let i=0;i<14;i++){const y=H*(.28+i*.054),x=noise(i+8)*W+Math.sin(time*.32+i)*W*.006,w=(9+noise(i+20)*23)*unit;c.strokeStyle=i%3?'#b6e3dc30':'#e3eee55c';c.lineWidth=i%3?1:1.8;c.beginPath();c.moveTo(x,y);c.lineTo(x+w,y);c.stroke();}
@@ -133,6 +214,7 @@ if(typeof module!=='undefined')module.exports=api;else root.BlobMath=api;
   // Cached grain mapped in receding board strips; no per-frame grain generation.
   c.save();c.beginPath();c.moveTo(back.x-half*back.sc,back.y);c.lineTo(back.x+half*back.sc,back.y);c.lineTo(front.x+half*front.sc,front.y);c.lineTo(front.x-half*front.sc,front.y);c.closePath();c.clip();
   for(let d=Math.ceil((position-160)/32)*32-position;d<view;d+=32){const id=Math.round((d+position)/32),a=project(-1,d),b=project(1,d),far=project(0,d+32);c.drawImage(plank,a.x,far.y,b.x-a.x,Math.max(1,a.y-far.y+1));if(id%3===0){c.fillStyle='#654c2e0a';c.fillRect(a.x,far.y,b.x-a.x,a.y-far.y+1);}}
+  if(theme===2){c.fillStyle='#21325520';c.fillRect(0,0,W,H);}
   c.restore();
   // Raised parapets: lit top, shaded wall, and world-anchored segment seams.
   for(const side of [-1,1]){
@@ -156,7 +238,8 @@ if(typeof module!=='undefined')module.exports=api;else root.BlobMath=api;
 /* Canvas renderer and fixed-step controller. No external assets or network. */
 (()=>{
 'use strict';
-const {LEVEL,operation,encounter,cancellation,signed,fits,signAllowed}=BlobMath;
+const {operation,encounter,cancellation,signed,fits,signAllowed,LEVELS,DIFFICULTIES,makeLevel}=BlobMath;
+let LEVEL=makeLevel(),selectedLevel=0,difficulty='standard',runSeed=1;
 const $=id=>document.getElementById(id), canvas=$('game'),ctx=canvas.getContext('2d',{alpha:false});
 const ui={notice:$('notice'),progress:$('progress')};
 let W=0,H=0,dpr=1,half=0,horizon=0,near=0,unit=1,quality=1;
@@ -184,28 +267,34 @@ function round(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
 function tag(x,y,text,color='#245d69',size=16){ctx.font=`800 ${size}px system-ui`;const width=ctx.measureText(text).width+18,height=size+13;ctx.fillStyle='#17364820';round(x-width/2,y-height/2+3,width,height,7);ctx.fill();ctx.fillStyle=color;round(x-width/2,y-height/2,width,height,7);ctx.fill();ctx.strokeStyle='#ffffffdd';ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle='white';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y);}
 function message(text){ui.notice.textContent=text;}
 function reset(start=false){
- formations.clear();cameraX=0;dragCameraX=0;keys.clear();held=0;dragging=false;s={mode:start?'running':'ready',position:0,value:LEVEL.start,x:0,target:0,next:0,remaining:null,fieldPassed:false,incoming:LEVEL.rows[1].items.map(it=>({...it,z:450,original:it.v,done:false})),lastSpawned:false,contacts:[],cancel:null,log:[],flash:0,end:false};
- $('pause').textContent='Pause';$('pauseVeil').hidden=true;ui.progress.style.width='0%';message('Look ahead. Choose your first operation.');sync();
+ formations.clear();cameraX=0;dragCameraX=0;keys.clear();held=0;dragging=false;s={mode:start?'running':'ready',position:0,value:LEVEL.start,x:0,target:0,next:0,incoming:[],spawned:[],passed:[],contacts:[],cancel:null,log:[],flash:0,end:false,won:false};
+ $('pause').textContent='Pause';$('pauseVeil').hidden=true;ui.progress.style.width='0%';message(LEVEL.rows[0].title);$('levelHud').textContent=`${selectedLevel+1} / ${LEVELS.length} · ${LEVEL.name} · ${DIFFICULTIES[difficulty].name}`;sync();
 }
 function sync(){canvas.setAttribute('aria-label',`Signed integer runner. Current army ${signed(s.value)}. Use left/right arrows or drag to steer.`);}
-function stop(title,text,won=false){s.mode='ended';s.end=true;$('resultTag').textContent=won?'Level complete':'Run ended';$('resultTitle').textContent=title;$('resultText').textContent=text;$('history').replaceChildren(...s.log.map(text=>{const d=document.createElement('div');d.textContent=text;return d;}));$('result').showModal();}
+function stop(title,text,won=false){s.mode='ended';s.end=true;s.won=won;$('nextLevel').hidden=!won||selectedLevel===LEVELS.length-1;$('resultTag').textContent=won?'Level complete':'Run ended';$('resultTitle').textContent=title;$('resultText').textContent=text;$('history').replaceChildren(...s.log.map(text=>{const d=document.createElement('div');d.textContent=text;return d;}));$('result').showModal();}
 function pause(){if(s.mode==='running'){s.mode='paused';keys.clear();held=0;}else if(s.mode==='paused')s.mode='running';$('pause').textContent=s.mode==='paused'?'Resume':'Pause';$('pauseVeil').hidden=s.mode!=='paused';}
 function log(text){s.log.push(text);message(text);}
 function contactGap(a,b){return 20+Math.min(36,(Math.sqrt(Math.abs(a))+Math.sqrt(Math.abs(b)))*1.4);}
 function finishContact(enemy){
  enemy.done=true;s.contacts.push(enemy.id);
- if(enemy.id==='last'){s.next=6;}else{s.next=s.contacts.filter(id=>id!=='last').length===2?3:2;}
+ if(s.incoming.filter(e=>e.row===s.next).every(e=>e.done)){s.next++;}
+}
+function spawnCurrent(){
+ const row=LEVEL.rows[s.next];if(!row||!['incoming','swarm'].includes(row.type)||s.spawned.includes(s.next))return;
+ const items=row.type==='incoming'?row.items:[{id:row.id,x:0,v:row.v}];
+ for(const it of items)s.incoming.push({...it,id:row.id+'-'+it.id,row:s.next,z:row.z,original:it.v,done:false});
+ s.spawned.push(s.next);message(row.title);
 }
 function meet(enemy){
  const a=s.value,b=enemy.v;
  if(a*b>0){s.value=encounter(a,b);finishContact(enemy);log(`${signed(a)} joins ${signed(b)} → ${signed(s.value)}`);sync();return;}
- s.cancel={a,b,x:s.x,enemyId:enemy.id,elapsed:0,duration:.7,result:encounter(a,b),gap:enemy.z-s.position};
+ s.cancel={a,b,x:s.x,enemyId:enemy.id,elapsed:0,duration:difficulty==='fast'?.42:.55,result:encounter(a,b),gap:enemy.z-s.position};
  log(`${signed(a)} meets ${signed(b)} · canceling at front contact`);
 }
 function updateIncoming(dt,forwardStep=0){
- const active=s.next>=1;
+ const active=LEVEL.rows[s.next]?.type;
  for(const enemy of s.incoming){
-  if(enemy.done||!active||s.cancel?.enemyId===enemy.id)continue;
+  if(enemy.done||!['incoming','swarm'].includes(active)||enemy.row!==s.next||s.cancel?.enemyId===enemy.id)continue;
   const d=enemy.z-s.position;
   if(d>LEVEL.view)continue;
   const gap=contactGap(s.value,enemy.v);
@@ -214,12 +303,12 @@ function updateIncoming(dt,forwardStep=0){
   const frontHalf=footprint(s.value).spread/half*.65;
   const targetX=clamp(enemy.x,s.x-frontHalf,s.x+frontHalf);
   const dx=(targetX-enemy.x)*180,dz=gap-(enemy.z-s.position+forwardStep);
-  const length=Math.hypot(dx,dz),travel=Math.min(length,22*dt+forwardStep);
+  const length=Math.hypot(dx,dz),travel=Math.min(length,(LEVEL.speed*.42)*dt+forwardStep);
   if(length>.001){enemy.x+=dx/length*travel/180;enemy.z=s.position+Math.max(gap,enemy.z-s.position+forwardStep+dz/length*travel);}
 
  }
  if(s.cancel)return;
- const candidates=s.incoming.filter(enemy=>!enemy.done&&enemy.z-s.position<=contactGap(s.value,enemy.v)+.9)
+ const candidates=s.incoming.filter(enemy=>!enemy.done&&enemy.row===s.next&&enemy.z-s.position<=contactGap(s.value,enemy.v)+.9)
  .filter(enemy=>Math.abs(enemy.x-s.x)<Math.min(.65,(footprint(s.value).spread+footprint(enemy.v).spread)/half+.035))
  .sort((a,b)=>(a.z-s.position)-(b.z-s.position)||Math.abs(a.x-s.x)-Math.abs(b.x-s.x));
  if(candidates.length)meet(candidates[0]);
@@ -229,8 +318,12 @@ function resolve(row){
   const magnitude=Math.abs(s.value);log(`Gate: |${signed(s.value)}| = ${magnitude}; requires < ${row.capacity}`);
   if(fits(s.value,row.capacity))stop('A narrow escape!',`${signed(s.value)} fits: ${magnitude} < ${row.capacity}. Your whole swarm passes.`,true);
   else stop('Too large to pass.',`|${signed(s.value)}| = ${magnitude}, which is not less than ${row.capacity}. The entire swarm stops. Revisit your earlier choices.`);
+ }else if(row.type==='signGate'){
+  const word=row.sign>0?'positive':'negative';
+  if(!signAllowed(s.value,row.sign)){log(`${row.title}: ${signed(s.value)} blocked`);stop('Wrong sign at the gate.',`This gate requires a ${word} swarm. You arrived with ${signed(s.value)}. Use an earlier operation to change your sign.`);}
+  else{s.passed.push(row.id);log(`${row.title}: ${signed(s.value)} passes`);}
  }else if(row.type==='pads'){
-  const item=s.x<0?row.items[0]:row.items[1];
+  const item=row.items.reduce((best,it)=>Math.abs(it.x-s.x)<Math.abs(best.x-s.x)?it:best);
   const old=s.value;
   try{s.value=operation(old,item.op);}catch(e){stop('No whole-number swarm.',e.message);return;}
   s.flash=.65;log(`${signed(old)} ${item.label} → ${signed(s.value)}`);sync();
@@ -255,26 +348,20 @@ function step(dt){
  s.x+=(s.target-s.x)*Math.min(1,dt*13);
  const row=LEVEL.rows[s.next];
  if(row?.type==='gate'){s.target=0;s.x+=(0-s.x)*Math.min(1,dt*6);}
- if(s.next===5&&!s.lastSpawned){s.incoming.push({id:'last',x:0,z:1250,v:LEVEL.rows[5].v,original:LEVEL.rows[5].v,done:false});s.lastSpawned=true;}
+ spawnCurrent();
  const previousPosition=s.position;
  s.position+=LEVEL.speed*dt;
  // Keep the next operation ahead while homing swarms finish closing the gap.
- if(s.next===1||s.next===2)s.position=Math.min(s.position,760);
- if(s.next===5)s.position=Math.min(s.position,1380);
+ if(row&&['incoming','swarm'].includes(row.type))s.position=Math.min(s.position,row.hold);
  updateIncoming(dt,s.position-previousPosition);
  if(s.cancel||s.end)return;
- const field=LEVEL.rows[3].field;
- if(!s.fieldPassed&&s.position>=field.z){
-  if(!signAllowed(s.value,field.sign)){log(`Stone gate: ${signed(s.value)} is not positive`);stop('Wrong sign for the stone gate.',`This blue stone gate spans the road and admits positive armies only. ${signed(s.value)} is negative. Choose an operation that makes your swarm positive before reaching it.`);return;}
-  s.fieldPassed=true;log(`Blue stone gate passed: ${signed(s.value)} stays ${signed(s.value)}`);
- }
  const next=LEVEL.rows[s.next];
- if(next&&['pads','gate'].includes(next.type)&&s.position>=next.z){s.position=next.z;s.next++;resolve(next);}
- ui.progress.style.width=`${Math.min(100,s.position/1580*100)}%`;
+ if(next&&['pads','gate','signGate'].includes(next.type)&&s.position>=next.z){s.position=next.z;s.next++;resolve(next);}
+ ui.progress.style.width=`${Math.min(100,s.position/LEVEL.length*100)}%`;
 }
 
 function polygon(points,color){ctx.fillStyle=color;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();}
-function scene(){BlobArt.scene(ctx,{W,H,half,project,position:s.position,view:LEVEL.view,time,unit,cameraX});}
+function scene(){BlobArt.scene(ctx,{W,H,half,project,position:s.position,view:LEVEL.view,time,unit,cameraX,theme:LEVEL.theme});}
 // A stable disk of light visual particles, with no collision or pairwise physics.
 // Local coordinates survive resize. Existing members keep their identities as the
 // crowd grows; a delayed follow response creates a soft tail when steering.
@@ -356,12 +443,13 @@ function gate(d){
  ctx.strokeStyle='#c1f4d0';ctx.lineWidth=3;ctx.strokeRect(p.x-aperture,p.y-gateHeight,aperture*2,gateHeight);
  tag(p.x,p.y-gateHeight-33*p.sc,`|value| < ${LEVEL.capacity}`,'#214f4a',Math.max(14,22*p.sc*unit));
 }
-function drawSignField(d){
+function drawSignField(d,row){
  const p=project(0,d),width=half*p.sc,height=Math.max(38,125*p.sc*unit),top=p.y-height,pillar=Math.max(9,26*p.sc*unit);
- const stone=LEVEL.rows[3].field.sign>0?'#4e83aa':'#ad5669',light=LEVEL.rows[3].field.sign>0?'#94bad4':'#dba0ab',shade=LEVEL.rows[3].field.sign>0?'#2f526f':'#743849';
+ const stone=row.sign>0?'#4e83aa':'#ad5669',light=row.sign>0?'#94bad4':'#dba0ab',shade=row.sign>0?'#2f526f':'#743849';
  ctx.fillStyle='#142f492b';ctx.beginPath();ctx.ellipse(p.x,p.y+2*p.sc,width,pillar*.4,0,0,7);ctx.fill();
  for(const side of [-1,1]){const x=side<0?p.x-width:p.x+width-pillar;for(let j=0;j<5;j++)BlobArt.block(ctx,x,top+j*height/5,pillar,height/5,stone,light,shade);BlobArt.block(ctx,x-pillar*.08,top-pillar*.15,pillar*1.16,pillar*.32,light,'#b5cbd7',shade);BlobArt.block(ctx,x-pillar*.12,p.y-pillar*.2,pillar*1.24,pillar*.32,stone,light,shade);}
  const blocks=8;for(let j=0;j<blocks;j++)BlobArt.block(ctx,p.x-width+j*width*2/blocks,top-pillar,width*2/blocks,pillar,stone,light,shade);
+ tag(p.x,top-pillar-18*p.sc,row.sign>0?'POSITIVE +':'NEGATIVE −',row.sign>0?'#086cb0':'#b92c46',Math.max(12,19*p.sc*unit));
 }
 function drawImpact(){
  if(!s.cancel)return;
@@ -380,17 +468,17 @@ function draw(){
  const fp=footprint(mag),margin=clamp(1-(fp.spread+fp.r)/half,.08,.95);
  cameraX=clamp(mix(v?v.cx:s.x,s.x,1-Math.exp(-dt*12)),-margin,margin);
  draws=0;armyBounds=[];armyLabels=[];scene();
- const fieldDistance=LEVEL.rows[3].field.z-s.position;if(!s.fieldPassed&&fieldDistance>=0&&fieldDistance<=LEVEL.view)drawSignField(fieldDistance);
  for(let i=LEVEL.rows.length-1;i>=s.next;i--){
   const row=LEVEL.rows[i],d=row.z-s.position;if(d>LEVEL.view||d<0)continue;
   if(row.type==='gate')gate(d);
-  else if(row.type==='pads')for(const item of row.items)pad(item,d,i===s.next&&(s.x<0?item.x<0:item.x>0));
+  else if(row.type==='signGate')drawSignField(d,row);
+  else if(row.type==='pads')for(const item of row.items)pad(item,d,i===s.next&&Math.abs(s.x-item.x)<.52);
+  else if(['incoming','swarm'].includes(row.type)&&!s.spawned.includes(i)){
+   const items=row.items||[{id:row.id,x:0,v:row.v}];for(const it of items){const p=project(it.x,d);crowd(p.x,p.y,p.sc,it.v,60,true,null,'preview-'+row.id+'-'+it.id);}
+  }
  }
- // Both swarms are genuine moving entities. Render their actual approaching positions.
  const visible=s.incoming.filter(e=>!e.done&&e.z-s.position<=LEVEL.view).sort((a,b)=>b.z-a.z);
  for(const enemy of visible){const p=project(enemy.x,enemy.z-s.position);crowd(p.x,p.y,p.sc,enemy.v,60,true,null,enemy.id);}
- // The last swarm is previewed before it begins moving.
- if(!s.lastSpawned&&1250-s.position<=LEVEL.view){const p=project(0,1250-s.position);crowd(p.x,p.y,p.sc,LEVEL.rows[5].v,60,true,null,'last');}
  const p=project(s.x,0);crowd(p.x,p.y,1,s.value);drawImpact();renderArmyLabels();
 }
 function frame(ms){
@@ -422,7 +510,11 @@ addEventListener('keydown',e=>{
 addEventListener('keyup',e=>keys.delete(e.key));
 addEventListener('blur',()=>{keys.clear();held=0;dragging=false;if(s.mode==='running')pause();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&s.mode==='running')pause();last=0;accumulator=0;});
-$('begin').onclick=()=>{$('intro').close();reset(true);};
+function newRun(index,mode,seed){selectedLevel=index;difficulty=mode;runSeed=seed;LEVEL=makeLevel(index,seed,mode);reset(true);}
+function openMenu(){if(s.mode==='running')pause();$('levelSelect').value=selectedLevel;$('difficultySelect').value=difficulty;$('intro').showModal();}
+$('begin').onclick=()=>{$('intro').close();newRun(Number($('levelSelect').value),$('difficultySelect').value,(Date.now()^Math.floor(Math.random()*0x7fffffff))>>>0);};
+$('levels').onclick=openMenu;$('chooseLevel').onclick=()=>{$('result').close();openMenu();};
+$('nextLevel').onclick=()=>{$('result').close();$('levelSelect').value=Math.min(LEVELS.length-1,selectedLevel+1);newRun(Math.min(LEVELS.length-1,selectedLevel+1),difficulty,(runSeed+1337)>>>0);};
 $('restart').onclick=()=>reset(true);$('again').onclick=()=>{$('result').close();reset(true);};$('pause').onclick=pause;
 $('help').onclick=()=>{helpWasRunning=s.mode==='running';if(helpWasRunning)pause();$('helpDialog').showModal();};
 function resumeHelp(){if(helpWasRunning&&s.mode==='paused')pause();helpWasRunning=false;}
@@ -431,7 +523,7 @@ $('result').addEventListener('cancel',e=>e.preventDefault());$('intro').addEvent
 $('full').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else message('Fullscreen is unavailable here. Open the HTML directly in your browser.');}catch(e){message('Fullscreen is blocked here. Open the HTML directly in your browser.');}};
 document.addEventListener('fullscreenchange',()=>{$('full').textContent=document.fullscreenElement?'Exit full':'Fullscreen';resize();});
 // Read-only diagnostics used by the verification harness.
-window.BlobRunner={cameraSnapshot:()=>({x:cameraX,width:W,roadNear:project(0,0),roadFar:project(0,LEVEL.view),player:project(s.x,0)}),labelSnapshot:()=>({armies:armyBounds,labels:placedLabels}),resetMetrics:()=>{timings.length=0;frameIntervals.length=0;},visualSnapshot:()=>{const v=formations.get('player');return v?{magnitude:v.mag,center:v.cx,particleX:v.particles.slice(0,24).map(p=>p.x),...footprint(v.mag)}:null;},snapshot:()=>JSON.parse(JSON.stringify(s)),metrics:()=>({spriteBudget:budget,drawnSprites:draws,drawMsMean:timings.length?timings.reduce((a,b)=>a+b,0)/timings.length:0,drawMsMax:Math.max(0,...timings),frameMsMean:frameIntervals.length?frameIntervals.reduce((a,b)=>a+b,0)/frameIntervals.length:0,canvasWidth:canvas.width,canvasHeight:canvas.height,dpr})};
+window.BlobRunner={course:()=>JSON.parse(JSON.stringify(LEVEL)),cameraSnapshot:()=>({x:cameraX,width:W,roadNear:project(0,0),roadFar:project(0,LEVEL.view),player:project(s.x,0)}),labelSnapshot:()=>({armies:armyBounds,labels:placedLabels}),resetMetrics:()=>{timings.length=0;frameIntervals.length=0;},visualSnapshot:()=>{const v=formations.get('player');return v?{magnitude:v.mag,center:v.cx,particleX:v.particles.slice(0,24).map(p=>p.x),...footprint(v.mag)}:null;},snapshot:()=>JSON.parse(JSON.stringify(s)),metrics:()=>({spriteBudget:budget,drawnSprites:draws,drawMsMean:timings.length?timings.reduce((a,b)=>a+b,0)/timings.length:0,drawMsMax:Math.max(0,...timings),frameMsMean:frameIntervals.length?frameIntervals.reduce((a,b)=>a+b,0)/frameIntervals.length:0,canvasWidth:canvas.width,canvasHeight:canvas.height,dpr})};
 reset();$('intro').showModal();requestAnimationFrame(frame);
 })();
 

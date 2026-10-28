@@ -1,49 +1,39 @@
-# Blob Runner — The Narrow Escape
-Review build 9 · October 27, 2026
+# Blob Runner — Integer Run
+Build 10 · October 28, 2026
 
-Open **Blob_Runner.html** in a browser. It is self-contained and works offline.
-`index.html` is the equivalent entry point using the adjacent `src/` directory.
-No public GitHub deployment has been created or replaced.
+Open **Blob_Runner.html** offline, or use index.html with its adjacent src folder.
+The public repository is keeganfinlayson/Integer-Run. Its root index.html is a
+copy of the self-contained build for GitHub Pages.
 
-The game stays in a centered 9:16 portrait frame on desktop, phones, and
-fullscreen. Steer with arrows, A/D, dragging, or the onscreen arrows. Space
-pauses, R restarts, and Help preserves the previous pause state. Fullscreen and
-script execution can be restricted by an embedding host.
+## Student feedback changes
+- Default speed 88, up from 52. Relaxed 70 and Fast 108 are available.
+- Three longer courses: Riverstone Run (3100), Amber Crossing (3700), and
+  Twilight Rush (4300); the previous course length was 1580.
+- Multiple solutions: 12, 18, and 18 successful choice sequences, with different
+  signed endings. All three courses are available from Levels.
+- Operations and the initial pair of armies shuffle left/right on a new run.
+  Retry/Restart keeps the layout for strategy practice.
+- Full-width stone gates explicitly say POSITIVE + or NEGATIVE −.
+- Cached faceted islets, trees, lit stone posts, raised bridge edges, textured
+  planks, and three environment palettes add depth. The centered tracking camera
+  and simple nonhuman blob sprites are retained.
 
-Blue is positive; red is negative. Same signs merge and opposite signs cancel
-at their actual front contact. **If the player's army reaches zero at any point,
-the run ends immediately, even if the enemy has survivors.** Blue stone gates
-admit positive values; red stone gates admit negative values. Gate color carries
-the rule without a floating sign label. Passing a sign gate does not change value.
-The final gate tests magnitude and never removes overflow.
+Arrow keys, A/D, dragging, or the bottom arrows steer. Space pauses; R restarts.
+Help and fullscreen are available. Zero always loses. The final gate admits the
+whole swarm only when 0 < |value| < 5. No rewind, accounts, trackers, or network
+assets. The playfield stays 9:16 on desktop and mobile.
 
-Build 6 enlarges members and formations by about 50%, removes the top count
-box, and places army labels outside every army's drawn bounds. The player's
-number sits below its formation. The final incoming army is now −4 so the new
-zero-loss rule has a valid solution ending at +2.
+## Source and validation
+- src/model.js: exact arithmetic, seeded layouts, course specifications, solver.
+- src/game.js: fixed-step gameplay, event sequence, controls, camera, rendering.
+- src/art.js: original cached Canvas artwork and environment themes.
+- src/shell.html and styles.css: UI, setup, Help, and responsive layout.
+- build.py: generates both entry points with Python 3.
+- docs/LEVEL_SOLUTION.md: intended routes, alternatives, and failures.
+- docs/VERIFICATION.md: checks, performance, and device limits.
 
-See `docs/LEVEL_SOLUTION.md`, `docs/VERIFICATION.md`, and `docs/MOVEMENT_NOTES.md`.
-
-Source:
-- `src/model.js`: exact arithmetic and deterministic level definition.
-- `src/art.js`: original cached sprites, wood, stone, shoreline, and water artwork.
-- `src/game.js`: cached Canvas sprites, crowd textures, steering, contact checks,
-  zero-loss handling, stone gates, and label placement.
-- `src/styles.css` and `src/shell.html`: responsive UI and HTML shell.
-- `build.py`: rebuilds both entry points with Python 3.
-- `tests/`: arithmetic, actual-browser interaction, layout/iframe, performance.
-
-Runtime dependencies: none. Developer browser tests require Playwright and
-Chromium. From the package's parent folder, run
-`node blob-runner/tests/browser.cjs`, `layout.cjs`, or `performance.cjs` using the
-same tests directory. From the package folder run `python3 build.py` and
-`node tests/model.test.cjs`.
-
-Graphics are original cached Canvas art: eight 64×64 creature sprites (four variants per color) and two
-320×190 crowd textures. Mathematical quantities are independent of the capped
-visible detail. No commercial assets, trackers, fonts, or network calls are used.
-
-Build 9 adds lateral camera tracking: the player remains centered as the bridge
-moves sideways. Raised stone edges, bridge thickness, shaded gate faces, and
-scenery parallax add depth while retaining the build 7 artwork. See
-`docs/GRAPHICS_NOTES.md`. The mathematical level and winning +2 route are unchanged.
+Run `python3 blob-runner/build.py` from the repository root. Copy
+blob-runner/Blob_Runner.html to the root index.html before deploying.
+Run `node blob-runner/tests/model.test.cjs`; browser.cjs, layout.cjs, and
+performance.cjs in the same directory require Playwright and Chromium.
+Runtime dependencies: none. Fullscreen may be restricted by an embedding host.

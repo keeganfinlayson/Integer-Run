@@ -1,52 +1,80 @@
 {
   "passed": true,
+  "results": [
+    {
+      "level": 1,
+      "mode": "standard",
+      "value": -1,
+      "seed": 2671589394,
+      "nominalTravelSeconds": 35.22727272727273
+    },
+    {
+      "level": 1,
+      "mode": "standard",
+      "value": -1,
+      "seed": 3163592256,
+      "nominalTravelSeconds": 35.22727272727273
+    },
+    {
+      "level": 2,
+      "mode": "standard",
+      "value": 3,
+      "seed": 2920222905,
+      "nominalTravelSeconds": 42.04545454545455
+    },
+    {
+      "level": 2,
+      "mode": "standard",
+      "value": 1,
+      "seed": 4113575769,
+      "nominalTravelSeconds": 42.04545454545455
+    },
+    {
+      "level": 3,
+      "mode": "standard",
+      "value": 1,
+      "seed": 2813396923,
+      "nominalTravelSeconds": 48.86363636363637
+    },
+    {
+      "level": 3,
+      "mode": "standard",
+      "value": -1,
+      "seed": 3100850074,
+      "nominalTravelSeconds": 48.86363636363637
+    },
+    {
+      "level": 1,
+      "mode": "relaxed",
+      "value": 3
+    },
+    {
+      "level": 1,
+      "mode": "fast",
+      "value": -1
+    }
+  ],
   "checks": [
-    "camera follows right and left",
-    "player label stays centered",
-    "near/far camera parallax",
-    "camera freezes on pause",
-    "winning route",
-    "outnumbered player loses at zero",
-    "army labels avoid every army",
-    "top swarm box removed",
-    "both incoming swarms advance",
-    "direct approach without center waypoint",
-    "front impact",
-    "other swarm advances during cancellation",
-    "smooth footprint growth",
-    "differential particle lag",
-    "zero failure",
-    "wrong final gate stops -8 intact",
-    "full-width sign forcefield rejects unchanged -20",
-    "positive +20 passes sign forcefield",
-    "pause freeze",
-    "help pause restoration",
-    "keyboard restart",
-    "fullscreen enter and exit",
-    "touch steering",
-    "drag stable under moving camera",
-    "portrait and landscape fit",
+    "two winning routes per course",
+    "next course progression",
+    "three difficulty speeds",
+    "positive and negative sign gates",
+    "wrong sign stops unchanged army",
+    "zero loses",
+    "whole army fails size gate",
+    "seeded restart stable",
+    "keyboard",
+    "touch",
+    "drag stable with camera",
+    "pause",
+    "Help restores pause",
+    "fullscreen",
+    "camera centered",
+    "army number separation",
     "no page errors"
   ],
-  "desktop": {
-    "spriteBudget": 90,
-    "drawnSprites": 2,
-    "drawMsMean": 1.0389999999975166,
-    "drawMsMax": 3.3999999999068677,
-    "frameMsMean": 78.74999999999936,
-    "canvasWidth": 360,
-    "canvasHeight": 640,
-    "dpr": 0.75,
-    "note": "Deterministic frame injection for functional tests; frame interval is not an FPS benchmark."
-  },
-  "mobile": {
-    "spriteBudget": 180,
-    "drawnSprites": 92,
-    "drawMsMean": 1.700000000023283,
-    "drawMsMax": 10.5,
-    "frameMsMean": 100,
-    "canvasWidth": 329,
-    "canvasHeight": 585,
-    "dpr": 1.5
-  }
+  "signLabels": [
+    "POSITIVE +",
+    "NEGATIVE −"
+  ]
 }

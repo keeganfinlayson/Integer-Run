@@ -1,85 +1,56 @@
-const {chromium}=require('playwright');
-const fs=require('fs');
+const {chromium}=require('playwright'),fs=require('fs'),path=require('path');
 (async()=>{
  const alternate=process.env.BLOB_CHROMIUM_MODULE?require(process.env.BLOB_CHROMIUM_MODULE).default:null;
  if(alternate){fs.chown=(p,u,g,cb)=>cb(null);fs.lchown=(p,u,g,cb)=>cb(null);}
- const browser=await chromium.launch(alternate?{executablePath:await alternate.executablePath(),headless:true,args:['--no-sandbox','--disable-gpu','--disable-dev-shm-usage']}:{headless:true,args:['--no-sandbox']});
- const page=await browser.newPage({viewport:{width:1365,height:900},deviceScaleFactor:1});
- async function initClock(p){await p.addInitScript(()=>{let t=0,queue=[];window.requestAnimationFrame=fn=>{queue.push(fn);return queue.length;};window.__advance=ms=>{const frames=Math.ceil(ms/100);for(let i=0;i<frames;i++){t+=ms/frames;const batch=queue;queue=[];for(const fn of batch)fn(t);}};});}
- async function advance(p,ms){await p.evaluate(ms=>{window.__advance(ms);const {armies,labels}=BlobRunner.labelSnapshot();if(labels.length!==armies.length)throw Error('An army label is missing');for(const l of labels)for(const a of armies)if(l.x1<a.x2&&l.x2>a.x1&&l.y1<a.y2&&l.y2>a.y1)throw Error('Number label overlaps army');},ms);}
- const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await initClock(page);await page.goto(require('url').pathToFileURL(require('path').resolve(__dirname,'../Blob_Runner.html')).href);
- await page.locator('#begin').click({force:true});await advance(page,100);
- await page.screenshot({path:'blob-runner/docs/desktop-start.png'});
- async function snap(){return page.evaluate(()=>BlobRunner.snapshot());}
- async function lane(side){await page.keyboard.down(side<0?'ArrowLeft':'ArrowRight');await advance(page,800);await page.keyboard.up(side<0?'ArrowLeft':'ArrowRight');}
- async function next(index){let guard=0;while((await snap()).next<index&&!(await snap()).end){await advance(page,250);if(++guard>300)throw Error('Timed out '+index);}}
- await lane(-1);await next(1);const morph=await page.evaluate(()=>BlobRunner.visualSnapshot());if(!(morph.magnitude>24&&morph.magnitude<48))throw Error('Footprint did not ease toward 48');const approachBefore=(await snap()).incoming.map(e=>e.z);const routeX=(await snap()).incoming.map(e=>e.x);await advance(page,500);const approachAfter=(await snap()).incoming.map(e=>e.z);if(!approachAfter.every((z,i)=>z<approachBefore[i]))throw Error('Both swarms must move independently');const routeAfter=(await snap()).incoming.map(e=>e.x);if(!routeAfter.every((x,i)=>x<routeX[i]))throw Error('Incoming armies must head directly left toward the player, with no center-first phase');await next(2);await next(3);
- while((await snap()).cancel)await advance(page,250);
- await page.screenshot({path:'blob-runner/docs/desktop-mid.png'});
- await next(4);await lane(-1);await next(5);while(!(await snap()).cancel&&(await snap()).next<6)await advance(page,50);await advance(page,200);const impact=await snap();if(impact.cancel){const enemy=impact.incoming.find(e=>e.id===impact.cancel.enemyId);if(enemy.z<=impact.position)throw Error('Impact must be from the front');}await page.screenshot({path:'blob-runner/docs/cancellation.png'});
- while((await snap()).cancel)await advance(page,250);
- await advance(page,2500);await page.screenshot({path:'blob-runner/docs/final-choice.png'});
- await next(8);const win=await snap();console.log('win route',win.value);
- if(!win.fieldPassed)throw Error('Winning route did not pass sign forcefield');
- if(!win.end||win.value!==2||!(await page.locator('#resultTitle').innerText()).includes('escape'))throw Error('Winning path failed');
- await page.screenshot({path:'blob-runner/docs/desktop-win.png'});
- const performance={...(await page.evaluate(()=>BlobRunner.metrics())),note:'Deterministic frame injection for functional tests; frame interval is not an FPS benchmark.'};
- // Zero branch, using normal keyboard steering.
- await page.locator('#again').click({force:true});await lane(-1);await next(1);await lane(1);while(!(await snap()).cancel&&!(await snap()).end)await advance(page,50);const waitingRed=(await snap()).incoming.find(e=>e.id==='red').z;await advance(page,200);if((await snap()).incoming.find(e=>e.id==='red').z>=waitingRed)throw Error('Other swarm stopped during impact');await advance(page,2000);
- if((await snap()).value!==0||!(await snap()).end)throw Error('Zero branch failed');
- // Correct route with wrong final circle; whole swarm remains −8.
- await page.locator('#again').click({force:true});await lane(-1);await next(1);await next(2);await next(3);await next(4);await next(5);await next(6);
- while((await snap()).cancel)await advance(page,250);
- await lane(1);await next(8);
- if((await snap()).value!==-8||!(await page.locator('#resultTitle').innerText()).includes('large'))throw Error('Gate fail branch failed');
- // Forcefield blocks a circle without changing the quantity.
- await page.locator('#again').click({force:true});await lane(-1);await next(3);while((await snap()).cancel)await advance(page,250);await lane(1);await next(4);
- let barrierGuard=0;while(!(await snap()).end){await advance(page,250);if(++barrierGuard>100)throw Error('Sign forcefield was bypassed');}
- if((await snap()).value!==-20||!(await page.locator('#resultTitle').innerText()).includes('Wrong sign'))throw Error('Forcefield failed');
- // Outnumbered player stops at zero; surviving enemy never becomes the player.
- await page.evaluate(()=>BlobMath.LEVEL.rows[1].items[1].v=60);await page.locator('#again').click({force:true});await lane(-1);await next(1);await lane(1);let zeroGuard=0;while(!(await snap()).end){await advance(page,100);if(++zeroGuard>200)throw Error('Zero loss did not trigger');}const outnumbered=await snap();if(outnumbered.value!==0||outnumbered.incoming.find(e=>e.id==='blue').v!==12)throw Error('Outnumbered player continued after zero');await page.evaluate(()=>BlobMath.LEVEL.rows[1].items[1].v=48);
- if(await page.locator('#quantity').count())throw Error('Top swarm box remains');
- // Pause and help retain exact position.
- await page.locator('#again').click({force:true});await advance(page,500);await page.locator('#pause').click({force:true});const pos=(await snap()).position;await advance(page,2000);if((await snap()).position!==pos)throw Error('Pause moved');
- await page.locator('#help').click({force:true});await advance(page,500);await page.locator('#closeHelp').click({force:true});if((await snap()).mode!=='paused')throw Error('Help unpaused paused game');
- await page.locator('#pause').click({force:true});await page.locator('#help').click({force:true});await page.locator('#closeHelp').click({force:true});if((await snap()).mode!=='running')throw Error('Help did not restore run');
- await page.keyboard.press('r');if((await snap()).value!==24)throw Error('Restart failed');
- await advance(page,100);const visualBefore=await page.evaluate(()=>BlobRunner.visualSnapshot());await page.keyboard.down('ArrowRight');await advance(page,250);await page.keyboard.up('ArrowRight');const visualAfter=await page.evaluate(()=>BlobRunner.visualSnapshot());const shifts=visualAfter.particleX.map((x,i)=>x-visualBefore.particleX[i]);if(Math.max(...shifts)-Math.min(...shifts)<.002)throw Error('Formation moved rigidly');if((await snap()).value!==24)throw Error('Visual steering changed arithmetic');
- // A lateral camera follows the formation while the road and scenery move oppositely.
- await advance(page,350);
- const cameraRight=await page.evaluate(()=>({c:BlobRunner.cameraSnapshot(),labels:BlobRunner.labelSnapshot()}));
- if(cameraRight.c.x<=.1||cameraRight.c.roadNear.x>=cameraRight.c.width/2)throw Error('Camera did not follow right');
- const playerLabel=cameraRight.labels.labels.find(l=>l.key==='player');
- if(Math.abs((playerLabel.x1+playerLabel.x2)/2-cameraRight.c.width/2)>2)throw Error('Player is not centered under tracking camera');
- if(Math.abs(cameraRight.c.roadFar.x-cameraRight.c.width/2)>=Math.abs(cameraRight.c.roadNear.x-cameraRight.c.width/2))throw Error('Camera depth parallax failed');
- await page.screenshot({path:'blob-runner/docs/camera-right.png'});
- await page.keyboard.down('ArrowLeft');await advance(page,900);await page.keyboard.up('ArrowLeft');await advance(page,350);
- const cameraLeft=await page.evaluate(()=>BlobRunner.cameraSnapshot());
- if(cameraLeft.x>=-.1||cameraLeft.roadNear.x<=cameraLeft.width/2)throw Error('Camera did not follow left');
- await page.screenshot({path:'blob-runner/docs/camera-left.png'});
- await page.locator('#pause').click({force:true});await advance(page,500);
- if(Math.abs((await page.evaluate(()=>BlobRunner.cameraSnapshot())).x-cameraLeft.x)>1e-8)throw Error('Camera moved while paused');
- await page.locator('#pause').click({force:true});
- await page.locator('#full').click({force:true});await page.waitForFunction(()=>!!document.fullscreenElement,null,{polling:100});await page.locator('#full').click({force:true});await page.waitForFunction(()=>!document.fullscreenElement,null,{polling:100});
- // Touch/portrait and landscape resizing, no overflow; pointer steering.
- const mobile=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:3});
- mobile.on('pageerror',e=>errors.push(e.message));await initClock(mobile);await mobile.goto(require('url').pathToFileURL(require('path').resolve(__dirname,'../Blob_Runner.html')).href);await mobile.locator('#begin').tap({force:true});
- await mobile.touchscreen.tap(70,650);await advance(mobile,700);if((await mobile.evaluate(()=>BlobRunner.snapshot())).x>=0)throw Error('Touch steering failed');
- await mobile.screenshot({path:'blob-runner/docs/phone-start.png'});
- // Drag targets use a stable camera reference, even as the camera catches up.
- const dragBefore=await mobile.evaluate(()=>BlobRunner.snapshot());
- await mobile.mouse.move(195,620);await mobile.mouse.down();await mobile.mouse.move(285,620);await advance(mobile,500);
- const dragTarget=await mobile.evaluate(()=>BlobRunner.snapshot());
- await mobile.mouse.move(286,620);await advance(mobile,100);await mobile.mouse.up();
- const dragAfter=await mobile.evaluate(()=>BlobRunner.snapshot());
- if(dragAfter.x<=dragBefore.x||Math.abs(dragAfter.target-dragTarget.target)>.012)throw Error('Camera caused touch-drag steering feedback');
- await mobile.locator('#right').tap({force:true}); // pointer held functionality tested below
- const button=await mobile.locator('#right').boundingBox();await mobile.mouse.move(button.x+button.width/2,button.y+button.height/2);await mobile.mouse.down();await advance(mobile,500);await mobile.mouse.up();if((await mobile.evaluate(()=>BlobRunner.snapshot())).x<=0)throw Error('Onscreen arrow failed');
- await mobile.setViewportSize({width:844,height:390});await mobile.waitForTimeout(150);await advance(mobile,200);await mobile.screenshot({path:'blob-runner/docs/phone-landscape.png'});
- const mobileMetrics=await mobile.evaluate(()=>BlobRunner.metrics());
- const overflow=await mobile.evaluate(()=>document.documentElement.scrollWidth>innerWidth||document.documentElement.scrollHeight>innerHeight);if(overflow)throw Error('Mobile overflow');
+ const browser=await chromium.launch(alternate?{executablePath:await alternate.executablePath(),headless:true,args:['--no-sandbox','--disable-gpu','--disable-dev-shm-usage']}:{headless:true});
+ const p=await browser.newPage({viewport:{width:1365,height:900},hasTouch:true});const errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.addInitScript(()=>{let t=0,queue=[];window.requestAnimationFrame=fn=>{queue.push(fn);return queue.length;};window.__advance=ms=>{const n=Math.ceil(ms/50);for(let i=0;i<n;i++){t+=ms/n;const q=queue;queue=[];for(const fn of q)fn(t);}};window.__gateWords=[];const f=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,...args){if(text==='POSITIVE +'||text==='NEGATIVE −')window.__gateWords.push(text);return f.call(this,text,...args);};});
+ await p.goto(require('url').pathToFileURL(path.resolve(__dirname,'../Blob_Runner.html')).href);
+ async function advance(ms=200){await p.evaluate(ms=>{__advance(ms);const {armies,labels}=BlobRunner.labelSnapshot();if(labels.length!==armies.length)throw Error('Missing army number');for(const l of labels)for(const a of armies)if(l.x1<a.x2&&l.x2>a.x1&&l.y1<a.y2&&l.y2>a.y1)throw Error('Army label overlap');},ms);}
+ async function snapshot(){return p.evaluate(()=>BlobRunner.snapshot());}
+ async function setup(index,mode='standard'){
+  if(await p.locator('#result').isVisible())await p.locator('#chooseLevel').click();
+  else if(!await p.locator('#intro').isVisible())await p.locator('#levels').click();
+  await p.locator('#levelSelect').selectOption(String(index));await p.locator('#difficultySelect').selectOption(mode);await p.locator('#begin').click();await advance(50);
+ }
+ async function play(index,mode,choice=0,override=null){
+  await setup(index,mode);const level=await p.evaluate(()=>BlobRunner.course());
+  const wins=await p.evaluate(()=>BlobMath.solve(BlobRunner.course()).wins);
+  const plan=wins[choice%wins.length];let key=null,guard=0,seen=new Set();
+  while(!(await snapshot()).end){const state=await snapshot(),row=level.rows[state.next];let action=plan.actions.find(a=>a.row===row?.id);
+   if(override)action=override(row,action,level)||action;
+   let desired=action?.x??0;
+   const wanted=desired<-.1?'ArrowLeft':desired>.1?'ArrowRight':null;
+   if(key!==wanted){if(key)await p.keyboard.up(key);key=wanted;if(key)await p.keyboard.down(key);}
+   if(!seen.has(row?.id)&&row?.id==='positiveChoice'){await p.screenshot({path:`blob-runner/docs/level-${index+1}-gate.png`});seen.add(row.id);}
+   await advance();if(++guard>600)throw Error('Course stalled: '+JSON.stringify(await snapshot()));
+  }
+  if(key)await p.keyboard.up(key);return {state:await snapshot(),level,plan};
+ }
+ const results=[];
+ for(let i=0;i<3;i++){
+  for(const route of [0,3]){const r=await play(i,'standard',route);if(!r.state.won)throw Error('Route failed '+JSON.stringify(r));if(r.state.value!==r.plan.value)throw Error('Route arithmetic mismatch');if(r.state.passed.length!==2)throw Error('Both sign gates not passed');results.push({level:i+1,mode:'standard',value:r.state.value,seed:r.level.seed,nominalTravelSeconds:r.level.length/r.level.speed});}
+  await p.screenshot({path:`blob-runner/docs/level-${i+1}-win.png`});
+  if(i<2){await p.locator('#nextLevel').click();await advance(50);if((await p.evaluate(()=>BlobRunner.course())).index!==i+1)throw Error('Next course failed');}else if(await p.locator('#nextLevel').isVisible())throw Error('Next course shown after final course');
+ }
+ for(const mode of ['relaxed','fast']){const r=await play(0,mode);if(!r.state.won)throw Error('Difficulty route failed '+mode);results.push({level:1,mode,value:r.state.value});}
+ const badSign=await play(0,'standard',0,(row,a)=>row?.id==='positiveChoice'?{x:-a.x}:null);if(badSign.state.won||!(await p.locator('#resultTitle').innerText()).includes('Wrong sign'))throw Error('Sign gate failure missing');
+ const badSize=await play(0,'standard',0,(row,a)=>row?.id==='final'?{x:-a.x}:null);if(badSize.state.won||Math.abs(badSize.state.value)<5)throw Error('Whole army size failure missing');
+ const zero=await play(0,'standard',0,(row,a,level)=>{
+  if(row?.id==='start')return {x:row.items.find(i=>i.op.kind==='mul').x};
+  if(row?.id==='pair')return {x:row.items.find(i=>i.id==='blue').x};
+ });if(zero.state.value!==0||zero.state.won)throw Error('Exhausted player did not lose');
+ // Retry keeps the layout; new runs use a new shuffled seed.
+ await p.locator('#again').click();await advance(50);const before=await p.evaluate(()=>BlobRunner.course());await p.locator('#restart').click();const after=await p.evaluate(()=>BlobRunner.course());if(JSON.stringify(before)!==JSON.stringify(after))throw Error('Restart shuffled the run');
+ const pos=(await snapshot()).position;await p.locator('#pause').click();await advance(500);if((await snapshot()).position!==pos)throw Error('Pause advanced');await p.locator('#help').click();await p.locator('#closeHelp').click();if((await snapshot()).mode!=='paused')throw Error('Help lost pause');await p.locator('#pause').click();
+ await p.keyboard.press('r');await p.keyboard.down('ArrowRight');await advance(650);await p.keyboard.up('ArrowRight');await advance(350);
+ const c=await p.evaluate(()=>({camera:BlobRunner.cameraSnapshot(),labels:BlobRunner.labelSnapshot()})),label=c.labels.labels.find(l=>l.key==='player');if(c.camera.x<=.1||Math.abs((label.x1+label.x2)/2-c.camera.width/2)>2)throw Error('Camera tracking lost');
+ await p.screenshot({path:'blob-runner/docs/camera-right.png'});
+ await p.locator('#full').click();await p.waitForFunction(()=>!!document.fullscreenElement,null,{polling:100});await p.locator('#full').click();await p.waitForFunction(()=>!document.fullscreenElement,null,{polling:100});
+ await p.keyboard.press('r');const canvas=await p.locator('#game').boundingBox();await p.touchscreen.tap(canvas.x+canvas.width*.2,canvas.y+canvas.height*.6);await advance(500);if((await snapshot()).x>=0)throw Error('Touch failed');
+ await p.keyboard.press('r');const rect=await p.locator('#game').boundingBox();await p.mouse.move(rect.x+rect.width*.5,rect.y+rect.height*.6);await p.mouse.down();await p.mouse.move(rect.x+rect.width*.7,rect.y+rect.height*.6);await advance(400);const target=(await snapshot()).target;await p.mouse.move(rect.x+rect.width*.702,rect.y+rect.height*.6);await advance(100);await p.mouse.up();if(Math.abs((await snapshot()).target-target)>.012)throw Error('Drag camera feedback');
+ const words=await p.evaluate(()=>[...new Set(__gateWords)]);if(words.length!==2)throw Error('Sign gate labels were not rendered');
  if(errors.length)throw Error(errors.join('\n'));
- fs.writeFileSync('blob-runner/docs/browser-results.json',JSON.stringify({passed:true,checks:['camera follows right and left','player label stays centered','near/far camera parallax','camera freezes on pause','winning route','outnumbered player loses at zero','army labels avoid every army','top swarm box removed','both incoming swarms advance','direct approach without center waypoint','front impact','other swarm advances during cancellation','smooth footprint growth','differential particle lag','zero failure','wrong final gate stops -8 intact','full-width sign forcefield rejects unchanged -20','positive +20 passes sign forcefield','pause freeze','help pause restoration','keyboard restart','fullscreen enter and exit','touch steering','drag stable under moving camera','portrait and landscape fit','no page errors'],desktop:performance,mobile:mobileMetrics},null,2));
- await browser.close();console.log('Browser checks passed');
+ fs.writeFileSync('blob-runner/docs/browser-results.json',JSON.stringify({passed:true,results,checks:['two winning routes per course','next course progression','three difficulty speeds','positive and negative sign gates','wrong sign stops unchanged army','zero loses','whole army fails size gate','seeded restart stable','keyboard','touch','drag stable with camera','pause','Help restores pause','fullscreen','camera centered','army number separation','no page errors'],signLabels:words},null,2));
+ await browser.close();console.log('Browser gameplay checks passed:',results.length,'wins, zero/sign/size failures, controls and camera');
 })().catch(e=>{console.error(e);process.exit(1)});

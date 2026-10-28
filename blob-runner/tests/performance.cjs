@@ -10,7 +10,9 @@ const {chromium}=require('playwright'),fs=require('fs');
  async function sample(name,rate){await cdp.send('Emulation.setCPUThrottlingRate',{rate});await p.evaluate(()=>BlobRunner.resetMetrics());await p.waitForTimeout(4000);return {name,cpuThrottle:rate,...await p.evaluate(()=>BlobRunner.metrics())};}
  const normal=await sample('24 blobs, desktop, normal CPU',1);
  // Exact quantity and scene rendering remain independent at ten thousand.
- await p.evaluate(()=>{BlobMath.LEVEL.start=10000;document.getElementById('restart').click();document.getElementById('pause').click();});
+ const stressPath=require('path').resolve('qa/performance-stress.html');fs.mkdirSync('qa',{recursive:true});fs.writeFileSync(stressPath,fs.readFileSync(require('path').resolve(__dirname,'../Blob_Runner.html'),'utf8').replace("name:'Riverstone Run',start:24","name:'Riverstone Run',start:10000"));
+ await p.goto(require('url').pathToFileURL(stressPath).href);
+ await p.locator('#begin').click();await p.locator('#pause').click();
  const stress=await sample('10000 quantity, desktop, 4x CPU throttle',4);
  const state=await p.evaluate(()=>BlobRunner.snapshot());if(state.value!==10000)throw Error('Renderer changed quantity');if(stress.drawnSprites>400)throw Error('Sprite cap exceeded');
  await p.setViewportSize({width:390,height:844});const phone=await sample('10000 quantity, phone viewport, 4x CPU throttle',4);

@@ -1,40 +1,47 @@
-# Level 1 solution — build 6
+# Course solutions — build 10
+October 28, 2026
 
-The player loses immediately on reaching zero, including during cancellation
-against a larger opposite-sign army. Enemy survivors never become the player's
-army. Multiplication that reverses sign is a discrete operation, not a countdown
-through zero.
+Positions are shuffled for each new run. Follow operation labels, not left/right.
+Restart repeats the seed; Start new run shuffles positions. Difficulty changes
+pace only, so every mathematical solution remains available at every pace.
 
-| Action | Player value |
-|---|---:|
-| Start | +24 |
-| Choose ×(−2) | −48 |
-| Steer left so −20 arrives first; same signs merge | −68 |
-| Meet the approaching +48; cancel 48 from both | −20 |
-| Choose ×(−1) | +20 |
-| Pass the blue stone gate: positive values only, unchanged | +20 |
-| Subtract 12 | +8 |
-| Meet −4; cancel 4 from both | +4 |
-| Choose ÷2 | +2 |
-| Final gate: |value| < 6 | Pass: 2 < 6 |
+## Example solutions
 
-The final ×(−2) choice instead gives −8, which fails because 8 is not below 6.
-The −4 encounter replaces the previous −16 encounter: +8 against −16 would
-exhaust the player's army and must now be a loss.
+| Course | Successful sequence (quantity after each event) |
+|---|---|
+| Riverstone Run | +24 → ×(−2): −48 → join −20: −68 → cancel +48: −20 → ×(−1): +20 → POSITIVE gate → −12: +8 → meet −4: +4 → ×(−1): −4 → NEGATIVE gate → +8: +4 → ÷4: +1 → size gate |
+| Amber Crossing | +40 → ×(−2): −80 → join −28: −108 → cancel +80: −28 → ×(−1): +28 → POSITIVE gate → −20: +8 → ×2: +16 → meet −4: +12 → −16: −4 → NEGATIVE gate → +8: +4 → ÷4: +1 → size gate |
+| Twilight Rush | +56 → ×(−2): −112 → join −36: −148 → cancel +112: −36 → ×(−1): +36 → POSITIVE gate → −28: +8 → +4: +12 → meet −4: +8 → ×(−1): −8 → NEGATIVE gate → +16: +8 → ÷4: +2 → size gate |
 
-All 32 arithmetic choice combinations were checked: one win, eight zero losses,
-twelve wrong-sign gate failures, and eleven final-size failures. The full winning
-route was also completed through the actual browser controls.
+Every final gate requires **0 < |value| < 5**. Both positive and negative small
+swarms can pass it. The sign gates earlier in the course test sign only.
 
-Other outcomes:
-- +48 arriving first against −48 ends at zero immediately.
-- Keeping −20 with ×(+1) fails at the blue stone gate, in any lane.
-- Adding 12 after the blue gate produces +32, then +28 after −4; neither final
-  choice fits the size gate.
-- Choosing +16 initially leads to +68 after both incoming groups. Keeping it
-  positive passes the blue gate, but the later quantities remain too large.
+## Alternative routes
 
-Both armies approach directly from their own positions; actual front contact
-determines arrival order. The other army continues approaching during a local
-impact. The full road's sign check cannot be bypassed by steering. Blue stone
-means positive and red stone means negative; this level uses a blue gate.
+All three courses also support a positive opening (+8). Survive the two
+incoming armies, retain the positive sign, and choose the larger subtraction:
+−52, −92, or −132 respectively. This returns the intended quantity to +8.
+Positive openings can survive either incoming order; negative openings must
+merge with red before the equal positive swarm arrives.
+
+Later operations provide several ways through the negative gate and final
+size gate. Different successful routes end with different signed values.
+The exhaustive solver finds 12, 18, and 18 successful choice sequences in the
+three courses. Shuffling positions does not change those counts.
+
+## Understandable failures
+
+- Negative opening, blue first: the player's army reaches zero and loses.
+- Arrive negative at POSITIVE +, or positive at NEGATIVE −: the whole army stops.
+- Choose a subtraction inappropriate for the opening: later magnitude or sign
+  consequences can block progress.
+- Reach zero through an operation or cancellation: immediate loss. Enemy
+  survivors never become the player's new army.
+- Final ×(−2): every surviving quantity is a nonzero multiple of four; doubling
+  its magnitude cannot fit the final capacity of five. The whole army stops.
+- Final ÷4 is always integral. It wins only when earlier choices produce a
+  nonzero magnitude below twenty.
+
+`BlobMath.solve(course)` enumerates every operation branch and both initial
+encounter orders. Tests check 100 position seeds for each course, all difficulty
+speeds, distinct signed endings, strict gate comparisons, and the zero rule.

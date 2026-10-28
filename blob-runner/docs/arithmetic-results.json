@@ -1,473 +1,441 @@
 {
-  "checks": 139983,
-  "outcomes": [
+  "checks": 148326,
+  "courses": [
     {
-      "initial": 0,
-      "first": 0,
-      "fieldChoice": 0,
-      "trim": 0,
-      "final": 0,
-      "trace": [
-        -48,
-        -68,
-        -20,
-        20,
-        8,
-        4,
+      "name": "Riverstone Run",
+      "length": 3100,
+      "wins": 12,
+      "finalValues": [
+        3,
+        1,
+        -1
+      ],
+      "failures": {
+        "zero": 1,
+        "sign": 6,
+        "size": 24,
+        "integer": 0
+      },
+      "examples": [
+        {
+          "value": 3,
+          "actions": [
+            {
+              "row": "start",
+              "label": "×(−2)",
+              "x": -0.52
+            },
+            {
+              "row": "pair",
+              "order": [
+                "red",
+                "blue"
+              ],
+              "x": 0.52
+            },
+            {
+              "row": "positiveChoice",
+              "label": "×(−1)",
+              "x": -0.52
+            },
+            {
+              "row": "trim",
+              "label": "−12",
+              "x": -0.52
+            },
+            {
+              "row": "negativeChoice",
+              "label": "×(−1)",
+              "x": -0.52
+            },
+            {
+              "row": "recover",
+              "label": "+16",
+              "x": -0.52
+            },
+            {
+              "row": "final",
+              "label": "÷4",
+              "x": -0.52
+            }
+          ],
+          "trace": [
+            24,
+            -48,
+            -20,
+            20,
+            20,
+            8,
+            4,
+            -4,
+            -4,
+            12,
+            3,
+            3
+          ]
+        },
+        {
+          "value": 1,
+          "actions": [
+            {
+              "row": "start",
+              "label": "×(−2)",
+              "x": -0.52
+            },
+            {
+              "row": "pair",
+              "order": [
+                "red",
+                "blue"
+              ],
+              "x": 0.52
+            },
+            {
+              "row": "positiveChoice",
+              "label": "×(−1)",
+              "x": -0.52
+            },
+            {
+              "row": "trim",
+              "label": "−12",
+              "x": -0.52
+            },
+            {
+              "row": "negativeChoice",
+              "label": "×(−1)",
+              "x": -0.52
+            },
+            {
+              "row": "recover",
+              "label": "+8",
+              "x": 0.52
+            },
+            {
+              "row": "final",
+              "label": "÷4",
+              "x": -0.52
+            }
+          ],
+          "trace": [
+            24,
+            -48,
+            -20,
+            20,
+            20,
+            8,
+            4,
+            -4,
+            -4,
+            4,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Amber Crossing",
+      "length": 3700,
+      "wins": 18,
+      "finalValues": [
+        -1,
+        3,
+        1
+      ],
+      "failures": {
+        "zero": 1,
+        "sign": 9,
+        "size": 54,
+        "integer": 0
+      },
+      "examples": [
+        {
+          "value": -1,
+          "actions": [
+            {
+              "row": "start",
+              "label": "×(−2)",
+              "x": -0.52
+            },
+            {
+              "row": "pair",
+              "order": [
+                "red",
+                "blue"
+              ],
+              "x": 0.52
+            },
+            {
+              "row": "positiveChoice",
+              "label": "×(−1)",
+              "x": -0.52
+            },
+            {
+              "row": "trim",
+              "label": "−20",
+              "x": -0.52
+            },
+            {
+              "row": "reshape",
+              "label": "×1",
+              "x": -0.52
+            },
+            {
+              "row": "negativeChoice",
+              "label": "−16",
+              "x": -0.52
+            },
+            {
+              "row": "recover",
+              "label": "+8",
+              "x": -0.52
+            },
+            {
+              "row": "final",
+              "label": "÷4",
+              "x": -0.52
+            }
+          ],
+          "trace": [
+            40,
+            -80,
+            -28,
+            28,
+            28,
+            8,
+            8,
+            4,
+            -12,
+            -12,
+            -4,
+            -1,
+            -1
+          ]
+        },
+        {
+          "value": 3,
+          "actions": [
+            {
+              "row": "start",
+              "label": "×(−2)",
+              "x": -0.52
+            },
+            {
+              "row": "pair",
+              "order": [
+                "red",
+                "blue"
+              ],
+              "x": 0.52
+            },
+            {
+              "row": "positiveChoice",
+              "label": "×(−1)",
+              "x": -0.52
+            },
+            {
+              "row": "trim",
+              "label": "−20",
+              "x": -0.52
+            },
+            {
+              "row": "reshape",
+              "label": "×1",
+              "x": -0.52
+            },
+            {
+              "row": "negativeChoice",
+              "label": "−16",
+              "x": -0.52
+            },
+            {
+              "row": "recover",
+              "label": "+24",
+              "x": 0.52
+            },
+            {
+              "row": "final",
+              "label": "÷4",
+              "x": -0.52
+            }
+          ],
+          "trace": [
+            40,
+            -80,
+            -28,
+            28,
+            28,
+            8,
+            8,
+            4,
+            -12,
+            -12,
+            12,
+            3,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Twilight Rush",
+      "length": 4300,
+      "wins": 18,
+      "finalValues": [
+        1,
+        3,
+        -1,
         2
       ],
-      "result": "win"
-    },
-    {
-      "initial": 0,
-      "first": 0,
-      "fieldChoice": 0,
-      "trim": 0,
-      "final": 1,
-      "trace": [
-        -48,
-        -68,
-        -20,
-        20,
-        8,
-        4,
-        -8
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 0,
-      "first": 0,
-      "fieldChoice": 0,
-      "trim": 1,
-      "final": 0,
-      "trace": [
-        -48,
-        -68,
-        -20,
-        20,
-        32,
-        28,
-        14
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 0,
-      "first": 0,
-      "fieldChoice": 0,
-      "trim": 1,
-      "final": 1,
-      "trace": [
-        -48,
-        -68,
-        -20,
-        20,
-        32,
-        28,
-        -56
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 0,
-      "first": 0,
-      "fieldChoice": 1,
-      "trim": 0,
-      "final": 0,
-      "trace": [
-        -48,
-        -68,
-        -20,
-        -20
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 0,
-      "first": 0,
-      "fieldChoice": 1,
-      "trim": 0,
-      "final": 1,
-      "trace": [
-        -48,
-        -68,
-        -20,
-        -20
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 0,
-      "first": 0,
-      "fieldChoice": 1,
-      "trim": 1,
-      "final": 0,
-      "trace": [
-        -48,
-        -68,
-        -20,
-        -20
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 0,
-      "first": 0,
-      "fieldChoice": 1,
-      "trim": 1,
-      "final": 1,
-      "trace": [
-        -48,
-        -68,
-        -20,
-        -20
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 0,
-      "first": 1,
-      "fieldChoice": 0,
-      "trim": 0,
-      "final": 0,
-      "trace": [
-        -48,
-        0
-      ],
-      "result": "zero"
-    },
-    {
-      "initial": 0,
-      "first": 1,
-      "fieldChoice": 0,
-      "trim": 0,
-      "final": 1,
-      "trace": [
-        -48,
-        0
-      ],
-      "result": "zero"
-    },
-    {
-      "initial": 0,
-      "first": 1,
-      "fieldChoice": 0,
-      "trim": 1,
-      "final": 0,
-      "trace": [
-        -48,
-        0
-      ],
-      "result": "zero"
-    },
-    {
-      "initial": 0,
-      "first": 1,
-      "fieldChoice": 0,
-      "trim": 1,
-      "final": 1,
-      "trace": [
-        -48,
-        0
-      ],
-      "result": "zero"
-    },
-    {
-      "initial": 0,
-      "first": 1,
-      "fieldChoice": 1,
-      "trim": 0,
-      "final": 0,
-      "trace": [
-        -48,
-        0
-      ],
-      "result": "zero"
-    },
-    {
-      "initial": 0,
-      "first": 1,
-      "fieldChoice": 1,
-      "trim": 0,
-      "final": 1,
-      "trace": [
-        -48,
-        0
-      ],
-      "result": "zero"
-    },
-    {
-      "initial": 0,
-      "first": 1,
-      "fieldChoice": 1,
-      "trim": 1,
-      "final": 0,
-      "trace": [
-        -48,
-        0
-      ],
-      "result": "zero"
-    },
-    {
-      "initial": 0,
-      "first": 1,
-      "fieldChoice": 1,
-      "trim": 1,
-      "final": 1,
-      "trace": [
-        -48,
-        0
-      ],
-      "result": "zero"
-    },
-    {
-      "initial": 1,
-      "first": 0,
-      "fieldChoice": 0,
-      "trim": 0,
-      "final": 0,
-      "trace": [
-        40,
-        20,
-        68,
-        -68
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 1,
-      "first": 0,
-      "fieldChoice": 0,
-      "trim": 0,
-      "final": 1,
-      "trace": [
-        40,
-        20,
-        68,
-        -68
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 1,
-      "first": 0,
-      "fieldChoice": 0,
-      "trim": 1,
-      "final": 0,
-      "trace": [
-        40,
-        20,
-        68,
-        -68
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 1,
-      "first": 0,
-      "fieldChoice": 0,
-      "trim": 1,
-      "final": 1,
-      "trace": [
-        40,
-        20,
-        68,
-        -68
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 1,
-      "first": 0,
-      "fieldChoice": 1,
-      "trim": 0,
-      "final": 0,
-      "trace": [
-        40,
-        20,
-        68,
-        68,
-        56,
-        52,
-        26
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 1,
-      "first": 0,
-      "fieldChoice": 1,
-      "trim": 0,
-      "final": 1,
-      "trace": [
-        40,
-        20,
-        68,
-        68,
-        56,
-        52,
-        -104
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 1,
-      "first": 0,
-      "fieldChoice": 1,
-      "trim": 1,
-      "final": 0,
-      "trace": [
-        40,
-        20,
-        68,
-        68,
-        80,
-        76,
-        38
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 1,
-      "first": 0,
-      "fieldChoice": 1,
-      "trim": 1,
-      "final": 1,
-      "trace": [
-        40,
-        20,
-        68,
-        68,
-        80,
-        76,
-        -152
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 1,
-      "first": 1,
-      "fieldChoice": 0,
-      "trim": 0,
-      "final": 0,
-      "trace": [
-        40,
-        88,
-        68,
-        -68
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 1,
-      "first": 1,
-      "fieldChoice": 0,
-      "trim": 0,
-      "final": 1,
-      "trace": [
-        40,
-        88,
-        68,
-        -68
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 1,
-      "first": 1,
-      "fieldChoice": 0,
-      "trim": 1,
-      "final": 0,
-      "trace": [
-        40,
-        88,
-        68,
-        -68
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 1,
-      "first": 1,
-      "fieldChoice": 0,
-      "trim": 1,
-      "final": 1,
-      "trace": [
-        40,
-        88,
-        68,
-        -68
-      ],
-      "result": "wrongSign"
-    },
-    {
-      "initial": 1,
-      "first": 1,
-      "fieldChoice": 1,
-      "trim": 0,
-      "final": 0,
-      "trace": [
-        40,
-        88,
-        68,
-        68,
-        56,
-        52,
-        26
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 1,
-      "first": 1,
-      "fieldChoice": 1,
-      "trim": 0,
-      "final": 1,
-      "trace": [
-        40,
-        88,
-        68,
-        68,
-        56,
-        52,
-        -104
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 1,
-      "first": 1,
-      "fieldChoice": 1,
-      "trim": 1,
-      "final": 0,
-      "trace": [
-        40,
-        88,
-        68,
-        68,
-        80,
-        76,
-        38
-      ],
-      "result": "blocked"
-    },
-    {
-      "initial": 1,
-      "first": 1,
-      "fieldChoice": 1,
-      "trim": 1,
-      "final": 1,
-      "trace": [
-        40,
-        88,
-        68,
-        68,
-        80,
-        76,
-        -152
-      ],
-      "result": "blocked"
+      "failures": {
+        "zero": 7,
+        "sign": 9,
+        "size": 42,
+        "integer": 0
+      },
+      "examples": [
+        {
+          "value": 1,
+          "actions": [
+            {
+              "row": "start",
+              "label": "×(−2)",
+              "x": -0.52
+            },
+            {
+              "row": "pair",
+              "order": [
+                "red",
+                "blue"
+              ],
+              "x": 0.52
+            },
+            {
+              "row": "positiveChoice",
+              "label": "×(−1)",
+              "x": -0.52
+            },
+            {
+              "row": "trim",
+              "label": "−28",
+              "x": -0.52
+            },
+            {
+              "row": "reshape",
+              "label": "×2",
+              "x": -0.52
+            },
+            {
+              "row": "negativeChoice",
+              "label": "−16",
+              "x": -0.52
+            },
+            {
+              "row": "recover",
+              "label": "+8",
+              "x": -0.52
+            },
+            {
+              "row": "final",
+              "label": "÷4",
+              "x": -0.52
+            }
+          ],
+          "trace": [
+            56,
+            -112,
+            -36,
+            36,
+            36,
+            8,
+            16,
+            12,
+            -4,
+            -4,
+            4,
+            1,
+            1
+          ]
+        },
+        {
+          "value": 3,
+          "actions": [
+            {
+              "row": "start",
+              "label": "×(−2)",
+              "x": -0.52
+            },
+            {
+              "row": "pair",
+              "order": [
+                "red",
+                "blue"
+              ],
+              "x": 0.52
+            },
+            {
+              "row": "positiveChoice",
+              "label": "×(−1)",
+              "x": -0.52
+            },
+            {
+              "row": "trim",
+              "label": "−28",
+              "x": -0.52
+            },
+            {
+              "row": "reshape",
+              "label": "×2",
+              "x": -0.52
+            },
+            {
+              "row": "negativeChoice",
+              "label": "−16",
+              "x": -0.52
+            },
+            {
+              "row": "recover",
+              "label": "+16",
+              "x": 0.52
+            },
+            {
+              "row": "final",
+              "label": "÷4",
+              "x": -0.52
+            }
+          ],
+          "trace": [
+            56,
+            -112,
+            -36,
+            36,
+            36,
+            8,
+            16,
+            12,
+            -4,
+            -4,
+            12,
+            3,
+            3
+          ]
+        }
+      ]
     }
-  ]
+  ],
+  "shuffleSeedsPerCourse": 100,
+  "difficultySpeeds": {
+    "relaxed": {
+      "name": "Relaxed",
+      "speed": 70
+    },
+    "standard": {
+      "name": "Standard",
+      "speed": 88
+    },
+    "fast": {
+      "name": "Fast",
+      "speed": 108
+    }
+  }
 }

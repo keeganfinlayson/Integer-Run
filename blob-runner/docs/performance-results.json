@@ -6,9 +6,9 @@
       "cpuThrottle": 1,
       "spriteBudget": 180,
       "drawnSprites": 92,
-      "drawMsMean": 0.5344398340260555,
-      "drawMsMax": 6.300000000046566,
-      "frameMsMean": 16.66583333333333,
+      "drawMsMean": 0.6283333333325573,
+      "drawMsMax": 5,
+      "frameMsMean": 16.665833333333335,
       "canvasWidth": 480,
       "canvasHeight": 853,
       "dpr": 1
@@ -16,26 +16,26 @@
     {
       "name": "10000 quantity, desktop, 4x CPU throttle",
       "cpuThrottle": 4,
-      "spriteBudget": 180,
-      "drawnSprites": 249,
-      "drawMsMean": 2.95178571428516,
-      "drawMsMax": 10.700000000186265,
-      "frameMsMean": 23.331666666666667,
-      "canvasWidth": 480,
-      "canvasHeight": 853,
-      "dpr": 1
+      "spriteBudget": 90,
+      "drawnSprites": 159,
+      "drawMsMean": 3.7682119205298013,
+      "drawMsMax": 12.899999999906868,
+      "frameMsMean": 24.4425,
+      "canvasWidth": 360,
+      "canvasHeight": 640,
+      "dpr": 0.75
     },
     {
       "name": "10000 quantity, phone viewport, 4x CPU throttle",
       "cpuThrottle": 4,
-      "spriteBudget": 180,
-      "drawnSprites": 249,
-      "drawMsMean": 3.2638613861296233,
-      "drawMsMax": 18.300000000046566,
-      "frameMsMean": 20.832499999999996,
-      "canvasWidth": 390,
-      "canvasHeight": 693,
-      "dpr": 1
+      "spriteBudget": 90,
+      "drawnSprites": 159,
+      "drawMsMean": 3.6082926829254665,
+      "drawMsMax": 11.199999999953434,
+      "frameMsMean": 18.194166666666675,
+      "canvasWidth": 293,
+      "canvasHeight": 520,
+      "dpr": 0.75
     }
   ],
   "note": "Headless Linux software rendering, paused world with animated draw loop. CPU throttle is a proxy, not actual Chromebook hardware. Draw timings are rolling 300-frame measurements."
