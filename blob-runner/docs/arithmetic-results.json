@@ -1,0 +1,473 @@
+{
+  "checks": 139983,
+  "outcomes": [
+    {
+      "initial": 0,
+      "first": 0,
+      "fieldChoice": 0,
+      "trim": 0,
+      "final": 0,
+      "trace": [
+        -48,
+        -68,
+        -20,
+        20,
+        8,
+        4,
+        2
+      ],
+      "result": "win"
+    },
+    {
+      "initial": 0,
+      "first": 0,
+      "fieldChoice": 0,
+      "trim": 0,
+      "final": 1,
+      "trace": [
+        -48,
+        -68,
+        -20,
+        20,
+        8,
+        4,
+        -8
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 0,
+      "first": 0,
+      "fieldChoice": 0,
+      "trim": 1,
+      "final": 0,
+      "trace": [
+        -48,
+        -68,
+        -20,
+        20,
+        32,
+        28,
+        14
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 0,
+      "first": 0,
+      "fieldChoice": 0,
+      "trim": 1,
+      "final": 1,
+      "trace": [
+        -48,
+        -68,
+        -20,
+        20,
+        32,
+        28,
+        -56
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 0,
+      "first": 0,
+      "fieldChoice": 1,
+      "trim": 0,
+      "final": 0,
+      "trace": [
+        -48,
+        -68,
+        -20,
+        -20
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 0,
+      "first": 0,
+      "fieldChoice": 1,
+      "trim": 0,
+      "final": 1,
+      "trace": [
+        -48,
+        -68,
+        -20,
+        -20
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 0,
+      "first": 0,
+      "fieldChoice": 1,
+      "trim": 1,
+      "final": 0,
+      "trace": [
+        -48,
+        -68,
+        -20,
+        -20
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 0,
+      "first": 0,
+      "fieldChoice": 1,
+      "trim": 1,
+      "final": 1,
+      "trace": [
+        -48,
+        -68,
+        -20,
+        -20
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 0,
+      "first": 1,
+      "fieldChoice": 0,
+      "trim": 0,
+      "final": 0,
+      "trace": [
+        -48,
+        0
+      ],
+      "result": "zero"
+    },
+    {
+      "initial": 0,
+      "first": 1,
+      "fieldChoice": 0,
+      "trim": 0,
+      "final": 1,
+      "trace": [
+        -48,
+        0
+      ],
+      "result": "zero"
+    },
+    {
+      "initial": 0,
+      "first": 1,
+      "fieldChoice": 0,
+      "trim": 1,
+      "final": 0,
+      "trace": [
+        -48,
+        0
+      ],
+      "result": "zero"
+    },
+    {
+      "initial": 0,
+      "first": 1,
+      "fieldChoice": 0,
+      "trim": 1,
+      "final": 1,
+      "trace": [
+        -48,
+        0
+      ],
+      "result": "zero"
+    },
+    {
+      "initial": 0,
+      "first": 1,
+      "fieldChoice": 1,
+      "trim": 0,
+      "final": 0,
+      "trace": [
+        -48,
+        0
+      ],
+      "result": "zero"
+    },
+    {
+      "initial": 0,
+      "first": 1,
+      "fieldChoice": 1,
+      "trim": 0,
+      "final": 1,
+      "trace": [
+        -48,
+        0
+      ],
+      "result": "zero"
+    },
+    {
+      "initial": 0,
+      "first": 1,
+      "fieldChoice": 1,
+      "trim": 1,
+      "final": 0,
+      "trace": [
+        -48,
+        0
+      ],
+      "result": "zero"
+    },
+    {
+      "initial": 0,
+      "first": 1,
+      "fieldChoice": 1,
+      "trim": 1,
+      "final": 1,
+      "trace": [
+        -48,
+        0
+      ],
+      "result": "zero"
+    },
+    {
+      "initial": 1,
+      "first": 0,
+      "fieldChoice": 0,
+      "trim": 0,
+      "final": 0,
+      "trace": [
+        40,
+        20,
+        68,
+        -68
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 1,
+      "first": 0,
+      "fieldChoice": 0,
+      "trim": 0,
+      "final": 1,
+      "trace": [
+        40,
+        20,
+        68,
+        -68
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 1,
+      "first": 0,
+      "fieldChoice": 0,
+      "trim": 1,
+      "final": 0,
+      "trace": [
+        40,
+        20,
+        68,
+        -68
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 1,
+      "first": 0,
+      "fieldChoice": 0,
+      "trim": 1,
+      "final": 1,
+      "trace": [
+        40,
+        20,
+        68,
+        -68
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 1,
+      "first": 0,
+      "fieldChoice": 1,
+      "trim": 0,
+      "final": 0,
+      "trace": [
+        40,
+        20,
+        68,
+        68,
+        56,
+        52,
+        26
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 1,
+      "first": 0,
+      "fieldChoice": 1,
+      "trim": 0,
+      "final": 1,
+      "trace": [
+        40,
+        20,
+        68,
+        68,
+        56,
+        52,
+        -104
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 1,
+      "first": 0,
+      "fieldChoice": 1,
+      "trim": 1,
+      "final": 0,
+      "trace": [
+        40,
+        20,
+        68,
+        68,
+        80,
+        76,
+        38
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 1,
+      "first": 0,
+      "fieldChoice": 1,
+      "trim": 1,
+      "final": 1,
+      "trace": [
+        40,
+        20,
+        68,
+        68,
+        80,
+        76,
+        -152
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 1,
+      "first": 1,
+      "fieldChoice": 0,
+      "trim": 0,
+      "final": 0,
+      "trace": [
+        40,
+        88,
+        68,
+        -68
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 1,
+      "first": 1,
+      "fieldChoice": 0,
+      "trim": 0,
+      "final": 1,
+      "trace": [
+        40,
+        88,
+        68,
+        -68
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 1,
+      "first": 1,
+      "fieldChoice": 0,
+      "trim": 1,
+      "final": 0,
+      "trace": [
+        40,
+        88,
+        68,
+        -68
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 1,
+      "first": 1,
+      "fieldChoice": 0,
+      "trim": 1,
+      "final": 1,
+      "trace": [
+        40,
+        88,
+        68,
+        -68
+      ],
+      "result": "wrongSign"
+    },
+    {
+      "initial": 1,
+      "first": 1,
+      "fieldChoice": 1,
+      "trim": 0,
+      "final": 0,
+      "trace": [
+        40,
+        88,
+        68,
+        68,
+        56,
+        52,
+        26
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 1,
+      "first": 1,
+      "fieldChoice": 1,
+      "trim": 0,
+      "final": 1,
+      "trace": [
+        40,
+        88,
+        68,
+        68,
+        56,
+        52,
+        -104
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 1,
+      "first": 1,
+      "fieldChoice": 1,
+      "trim": 1,
+      "final": 0,
+      "trace": [
+        40,
+        88,
+        68,
+        68,
+        80,
+        76,
+        38
+      ],
+      "result": "blocked"
+    },
+    {
+      "initial": 1,
+      "first": 1,
+      "fieldChoice": 1,
+      "trim": 1,
+      "final": 1,
+      "trace": [
+        40,
+        88,
+        68,
+        68,
+        80,
+        76,
+        -152
+      ],
+      "result": "blocked"
+    }
+  ]
+}

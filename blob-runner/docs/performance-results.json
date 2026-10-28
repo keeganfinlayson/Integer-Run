@@ -1,0 +1,42 @@
+{
+  "browser": "153.0.8010.0",
+  "samples": [
+    {
+      "name": "24 blobs, desktop, normal CPU",
+      "cpuThrottle": 1,
+      "spriteBudget": 180,
+      "drawnSprites": 92,
+      "drawMsMean": 0.5344398340260555,
+      "drawMsMax": 6.300000000046566,
+      "frameMsMean": 16.66583333333333,
+      "canvasWidth": 480,
+      "canvasHeight": 853,
+      "dpr": 1
+    },
+    {
+      "name": "10000 quantity, desktop, 4x CPU throttle",
+      "cpuThrottle": 4,
+      "spriteBudget": 180,
+      "drawnSprites": 249,
+      "drawMsMean": 2.95178571428516,
+      "drawMsMax": 10.700000000186265,
+      "frameMsMean": 23.331666666666667,
+      "canvasWidth": 480,
+      "canvasHeight": 853,
+      "dpr": 1
+    },
+    {
+      "name": "10000 quantity, phone viewport, 4x CPU throttle",
+      "cpuThrottle": 4,
+      "spriteBudget": 180,
+      "drawnSprites": 249,
+      "drawMsMean": 3.2638613861296233,
+      "drawMsMax": 18.300000000046566,
+      "frameMsMean": 20.832499999999996,
+      "canvasWidth": 390,
+      "canvasHeight": 693,
+      "dpr": 1
+    }
+  ],
+  "note": "Headless Linux software rendering, paused world with animated draw loop. CPU throttle is a proxy, not actual Chromebook hardware. Draw timings are rolling 300-frame measurements."
+}

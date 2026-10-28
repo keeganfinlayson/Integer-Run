@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "viewports": [
+    "844x390",
+    "390x844",
+    "1024x768",
+    "320x568"
+  ],
+  "checks": [
+    "9:16 portrait field in every viewport",
+    "No document overflow",
+    "Header buttons within viewport",
+    "Script-only sandbox iframe loads and starts"
+  ]
+}

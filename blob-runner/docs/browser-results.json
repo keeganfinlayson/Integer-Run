@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "checks": [
+    "camera follows right and left",
+    "player label stays centered",
+    "near/far camera parallax",
+    "camera freezes on pause",
+    "winning route",
+    "outnumbered player loses at zero",
+    "army labels avoid every army",
+    "top swarm box removed",
+    "both incoming swarms advance",
+    "direct approach without center waypoint",
+    "front impact",
+    "other swarm advances during cancellation",
+    "smooth footprint growth",
+    "differential particle lag",
+    "zero failure",
+    "wrong final gate stops -8 intact",
+    "full-width sign forcefield rejects unchanged -20",
+    "positive +20 passes sign forcefield",
+    "pause freeze",
+    "help pause restoration",
+    "keyboard restart",
+    "fullscreen enter and exit",
+    "touch steering",
+    "drag stable under moving camera",
+    "portrait and landscape fit",
+    "no page errors"
+  ],
+  "desktop": {
+    "spriteBudget": 90,
+    "drawnSprites": 2,
+    "drawMsMean": 1.0389999999975166,
+    "drawMsMax": 3.3999999999068677,
+    "frameMsMean": 78.74999999999936,
+    "canvasWidth": 360,
+    "canvasHeight": 640,
+    "dpr": 0.75,
+    "note": "Deterministic frame injection for functional tests; frame interval is not an FPS benchmark."
+  },
+  "mobile": {
+    "spriteBudget": 180,
+    "drawnSprites": 92,
+    "drawMsMean": 1.700000000023283,
+    "drawMsMax": 10.5,
+    "frameMsMean": 100,
+    "canvasWidth": 329,
+    "canvasHeight": 585,
+    "dpr": 1.5
+  }
+}
