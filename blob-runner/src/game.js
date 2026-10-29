@@ -29,12 +29,23 @@ function project(x,d){const sc=1/(1+Math.max(-160,d)/510),far=1/(1+LEVEL.view/51
 function round(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
 function tag(x,y,text,color='#245d69',size=16){ctx.font=`800 ${size}px system-ui`;const width=ctx.measureText(text).width+18,height=size+13;ctx.fillStyle='#17364820';round(x-width/2,y-height/2+3,width,height,7);ctx.fill();ctx.fillStyle=color;round(x-width/2,y-height/2,width,height,7);ctx.fill();ctx.strokeStyle='#ffffffdd';ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle='white';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y);}
 function message(text){ui.notice.textContent=text;}
+const checkpointKey='integer-runner-boss-v1';let bossFrame=null;
+function bossURL(){return new URL(location.pathname.includes('/blob-runner/')?'../boss.html':'boss.html',location.href);}
+function saveCheckpoint(cp){try{localStorage.setItem(checkpointKey,JSON.stringify(cp));}catch(e){}}
+function readCheckpoint(){try{const cp=JSON.parse(localStorage.getItem(checkpointKey));return cp&&Number.isSafeInteger(cp.value)&&cp.value!==0&&Math.abs(cp.value)<=1000000?cp:null;}catch(e){return null;}}
+function launchBoss(value,only=false){const cp={value,only,level:selectedLevel,difficulty,seed:runSeed};saveCheckpoint(cp);s.mode='boss';keys.clear();held=0;
+ const url=bossURL();url.searchParams.set('army',value);url.searchParams.set('embedded','1');
+ bossFrame=document.createElement('iframe');bossFrame.src=url.href;bossFrame.title='Dr. Fin boss arena';bossFrame.allow='fullscreen';bossFrame.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;z-index:30;background:#172d2c';$('stage').append(bossFrame);}
+addEventListener('message',e=>{if(!bossFrame||e.source!==bossFrame.contentWindow||e.origin!==location.origin)return;
+ if(e.data?.type==='integer-boss-menu'){bossFrame.remove();bossFrame=null;reset();openMenu();}
+ if(e.data?.type==='integer-boss-win'){bossFrame.remove();bossFrame=null;try{localStorage.removeItem(checkpointKey);}catch(e){}stop('Dr. Fin defeated!',`You survived with ${signed(e.data.value)}.`,true);}
+});
 function reset(start=false){
  formations.clear();cameraX=0;dragCameraX=0;keys.clear();held=0;dragging=false;s={mode:start?'running':'ready',position:0,value:LEVEL.start,x:0,target:0,next:0,incoming:[],spawned:[],passed:[],contacts:[],cancel:null,log:[],flash:0,end:false,won:false};
  $('pause').textContent='Pause';$('pauseVeil').hidden=true;ui.progress.style.width='0%';message(LEVEL.rows[0].title);$('levelHud').textContent=`${selectedLevel+1} / ${LEVELS.length} · ${LEVEL.name} · ${DIFFICULTIES[difficulty].name}`;sync();
 }
 function sync(){canvas.setAttribute('aria-label',`Signed integer runner. Current army ${signed(s.value)}. Use left/right arrows or drag to steer.`);}
-function stop(title,text,won=false){s.mode='ended';s.end=true;s.won=won;$('nextLevel').hidden=!won||selectedLevel===LEVELS.length-1;$('resultTag').textContent=won?'Level complete':'Run ended';$('resultTitle').textContent=title;$('resultText').textContent=text;$('history').replaceChildren(...s.log.map(text=>{const d=document.createElement('div');d.textContent=text;return d;}));$('result').showModal();}
+function stop(title,text,won=false){s.mode='ended';s.end=true;s.won=won;$('nextLevel').hidden=!won||selectedLevel>=LEVELS.length-1;$('resultTag').textContent=won?'Level complete':'Run ended';$('resultTitle').textContent=title;$('resultText').textContent=text;$('history').replaceChildren(...s.log.map(text=>{const d=document.createElement('div');d.textContent=text;return d;}));$('result').showModal();}
 function pause(){if(s.mode==='running'){s.mode='paused';keys.clear();held=0;}else if(s.mode==='paused')s.mode='running';$('pause').textContent=s.mode==='paused'?'Resume':'Pause';$('pauseVeil').hidden=s.mode!=='paused';}
 function log(text){s.log.push(text);message(text);}
 function contactGap(a,b){return 20+Math.min(36,(Math.sqrt(Math.abs(a))+Math.sqrt(Math.abs(b)))*1.4);}
@@ -79,7 +90,7 @@ function updateIncoming(dt,forwardStep=0){
 function resolve(row){
  if(row.type==='gate'){
   const magnitude=Math.abs(s.value);log(`Gate: |${signed(s.value)}| = ${magnitude}; requires < ${row.capacity}`);
-  if(fits(s.value,row.capacity)){s.boss=BlobBoss.create();keys.clear();held=0;message('Boss arena: move to a circle. Oppose the pulse and survive.');}
+  if(fits(s.value,row.capacity)){launchBoss(s.value);}
   else stop('Too large to pass.',`|${signed(s.value)}| = ${magnitude}, which is not less than ${row.capacity}. The entire swarm stops. Revisit your earlier choices.`);
  }else if(row.type==='signGate'){
   const word=row.sign>0?'positive':'negative';
@@ -300,9 +311,10 @@ addEventListener('keydown',e=>{
 addEventListener('keyup',e=>keys.delete(e.key));
 addEventListener('blur',()=>{keys.clear();held=0;dragging=false;if(s.mode==='running')pause();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&s.mode==='running')pause();last=0;accumulator=0;});
-function newRun(index,mode,seed){selectedLevel=index;difficulty=mode;runSeed=seed;LEVEL=makeLevel(index,seed,mode);reset(true);}
-function openMenu(){if(s.mode==='running')pause();$('levelSelect').value=selectedLevel;$('difficultySelect').value=difficulty;$('intro').showModal();}
+function newRun(index,mode,seed){if(index===3){selectedLevel=3;difficulty=mode;runSeed=seed;reset(true);launchBoss(12,true);return;}selectedLevel=index;difficulty=mode;runSeed=seed;LEVEL=makeLevel(index,seed,mode);reset(true);}
+function openMenu(){if(s.mode==='running')pause();$('levelSelect').value=selectedLevel;$('difficultySelect').value=difficulty;$('resumeBoss').hidden=!readCheckpoint();$('intro').showModal();}
 $('begin').onclick=()=>{$('intro').close();newRun(Number($('levelSelect').value),$('difficultySelect').value,(Date.now()^Math.floor(Math.random()*0x7fffffff))>>>0);};
+$('resumeBoss').onclick=()=>{const cp=readCheckpoint();if(cp){$('intro').close();selectedLevel=cp.level;difficulty=cp.difficulty;runSeed=cp.seed;reset(true);launchBoss(cp.value,cp.only);}};
 $('levels').onclick=openMenu;$('chooseLevel').onclick=()=>{$('result').close();openMenu();};
 $('nextLevel').onclick=()=>{$('result').close();$('levelSelect').value=Math.min(LEVELS.length-1,selectedLevel+1);newRun(Math.min(LEVELS.length-1,selectedLevel+1),difficulty,(runSeed+1337)>>>0);};
 $('restart').onclick=()=>reset(true);$('again').onclick=()=>{$('result').close();reset(true);};$('pause').onclick=pause;
@@ -314,5 +326,5 @@ $('full').onclick=async()=>{try{if(document.fullscreenElement)await document.exi
 document.addEventListener('fullscreenchange',()=>{$('full').textContent=document.fullscreenElement?'Exit full':'Fullscreen';resize();});
 // Read-only diagnostics used by the verification harness.
 window.BlobRunner={course:()=>JSON.parse(JSON.stringify(LEVEL)),cameraSnapshot:()=>({x:cameraX,width:W,roadNear:project(0,0),roadFar:project(0,LEVEL.view),player:project(s.x,0)}),labelSnapshot:()=>({armies:armyBounds,labels:placedLabels}),resetMetrics:()=>{timings.length=0;frameIntervals.length=0;},visualSnapshot:()=>{const v=formations.get('player');return v?{magnitude:v.mag,center:v.cx,particleX:v.particles.slice(0,24).map(p=>p.x),...footprint(v.mag)}:null;},snapshot:()=>JSON.parse(JSON.stringify(s)),metrics:()=>({spriteBudget:budget,drawnSprites:draws,drawMsMean:timings.length?timings.reduce((a,b)=>a+b,0)/timings.length:0,drawMsMax:Math.max(0,...timings),frameMsMean:frameIntervals.length?frameIntervals.reduce((a,b)=>a+b,0)/frameIntervals.length:0,canvasWidth:canvas.width,canvasHeight:canvas.height,dpr})};
-reset();$('intro').showModal();requestAnimationFrame(frame);
+reset();$('resumeBoss').hidden=!readCheckpoint();$('intro').showModal();requestAnimationFrame(frame);
 })();
