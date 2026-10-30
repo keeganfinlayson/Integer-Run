@@ -23,7 +23,7 @@ for(const sign of [1,-1]){
  for(const p of points)g.drawImage(sprites[sign],p.x-7,p.y-10,14,14);
  massSprites[sign]=image;
 }
-function resize(){const bounds=$('stage').getBoundingClientRect();W=bounds.width;H=bounds.height;dpr=Math.min(devicePixelRatio||1,1.5)*quality;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);half=Math.min(W*.47,H*.58);horizon=H*(H<500?.33:.19);near=H*(H<500?.67:.76);unit=Math.min(W/440,H/700,1.3);}
+function resize(){const bounds=$('stage').getBoundingClientRect();W=bounds.width;H=bounds.height;dpr=Math.min(devicePixelRatio||1,1.5)*quality;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);half=Math.min(W*.30,H*.55);horizon=H*.22;near=H*.78;unit=Math.min(W/440,H/700,1.3);}
 addEventListener('resize',resize);resize();
 function project(x,d){const sc=1/(1+Math.max(-160,d)/510),far=1/(1+LEVEL.view/510);return {x:W/2+(x-cameraX)*half*sc,y:horizon+(near-horizon)*(sc-far)/(1-far),sc};}
 function round(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
@@ -50,7 +50,8 @@ function pause(){if(s.mode==='running'){s.mode='paused';keys.clear();held=0;}els
 function log(text){s.log.push(text);message(text);}
 function contactGap(a,b){return 20+Math.min(36,(Math.sqrt(Math.abs(a))+Math.sqrt(Math.abs(b)))*1.4);}
 function finishContact(enemy){
- enemy.done=true;s.contacts.push(enemy.id);
+ if(LEVEL.rows[enemy.row]?.type==='incoming')for(const other of s.incoming)if(other.row===enemy.row)other.done=true;
+ enemy.done=true;s.branch=null;s.contacts.push(enemy.id);
  if(s.incoming.filter(e=>e.row===s.next).every(e=>e.done)){s.next++;}
 }
 function spawnCurrent(){
@@ -66,8 +67,11 @@ function meet(enemy){
  log(`${signed(a)} meets ${signed(b)} · canceling at front contact`);
 }
 function updateIncoming(dt,forwardStep=0){
- const active=LEVEL.rows[s.next]?.type;
+ const active=LEVEL.rows[s.next]?.type,row=LEVEL.rows[s.next];
+ if(active==='incoming'&&s.position>=row.z-160&&!s.branch){s.branch=s.x<0?-1:1;s.target=s.branch*.52;}
+ if(active==='incoming'&&s.branch){s.x=s.branch*Math.max(.38,Math.abs(s.x));s.target=s.branch*Math.max(.38,Math.abs(s.target));}
  for(const enemy of s.incoming){
+  if(active==='incoming'&&(!s.branch||Math.sign(enemy.x)!==s.branch))continue;
   if(enemy.done||!['incoming','swarm'].includes(active)||enemy.row!==s.next||s.cancel?.enemyId===enemy.id)continue;
   const d=enemy.z-s.position;
   if(d>LEVEL.view)continue;
@@ -162,7 +166,7 @@ function stepBoss(dt){
  }
 }
 function polygon(points,color){ctx.fillStyle=color;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill();}
-function scene(){BlobArt.scene(ctx,{W,H,half,project,position:s.position,view:LEVEL.view,time,unit,cameraX,theme:LEVEL.theme});}
+function scene(){RunEnvironment.draw(ctx,{W,H,project:(x,z)=>project(x,z-s.position),position:s.position,pair:LEVEL.rows.find(r=>r.type==='incoming')});}
 // A stable disk of light visual particles, with no collision or pairwise physics.
 // Local coordinates survive resize. Existing members keep their identities as the
 // crowd grows; a delayed follow response creates a soft tail when steering.

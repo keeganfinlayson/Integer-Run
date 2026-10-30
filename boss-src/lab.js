@@ -2,7 +2,7 @@
 const c=document.querySelector('canvas'),g=c.getContext('2d'),$=id=>document.getElementById(id),sprite=new Image();sprite.src='assets/dr-fin-poses.webp';const stone=new Image();stone.src='assets/mossy-stone.webp';const forest=new Image();forest.src='assets/forest-chasm.webp';const creatures=BlobArt.creatures(),keys=new Set();let s,W,H,half,near,horizon,clock=0,last=0,paused=false,drag=false,held={x:0,z:0};
 const params=new URLSearchParams(location.search),entry=Number(params.get('army')),entryArmy=Number.isSafeInteger(entry)&&entry!==0&&Math.abs(entry)<=1000000?entry:12;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n)),signed=BlobMath.signed;
-function resize(){const r=c.getBoundingClientRect();W=r.width;H=r.height;const d=Math.min(devicePixelRatio||1,1.5);c.width=W*d;c.height=H*d;g.setTransform(d,0,0,d,0,0);half=W*.38;near=H*.88;horizon=H*.22;}addEventListener('resize',resize);resize();
+function resize(){const r=c.getBoundingClientRect();W=r.width;H=r.height;const d=Math.min(devicePixelRatio||1,1.5);c.width=W*d;c.height=H*d;g.setTransform(d,0,0,d,0,0);half=Math.min(W*.26,H*.7);near=H*.86;horizon=H*.20;}addEventListener('resize',resize);resize();
 function project(x,z){const d=z-s.forward,sc=1/(1+Math.max(-130,d)/510),far=1/(1+1100/510);return {x:W/2+(x-s.camera)*half*sc,y:horizon+(near-horizon)*(sc-far)/(1-far),sc};}
 const locations=[{x:-1.38,z:720,kind:'mul',bank:-1},{x:-.83,z:515,kind:'add',bank:-1},{x:.83,z:515,kind:'add',bank:1},{x:1.38,z:720,kind:'mul',bank:1}];
 function options(value){return locations.map(p=>{const n=p.kind==='add'?(p.bank<0?-Math.max(8,value+8):Math.max(8,8-value)):Math.sign(value)===p.bank?2:-1;const op={kind:p.kind,n};return {...p,op,result:BlobMath.operation(value,op),label:p.kind==='add'?(n<0?'−'+Math.abs(n):'+'+n):(n<0?`×(−${Math.abs(n)})`:'×'+n)};});}
@@ -126,7 +126,7 @@ function draw(){scenery();supports();
  if(s.wave){const q=project(0,s.wave.z);g.strokeStyle='#fff';g.lineWidth=5;g.beginPath();g.ellipse(q.x,q.y,half*1.28*q.sc,14*q.sc,0,0,7);g.stroke();label(q.x,q.y-8,'×(−1)','#794c97',14);}
  if(s.phase==='flip'){g.strokeStyle=-s.sign>0?'#7ae7ff':'#ff8eaf';g.lineWidth=4;g.beginPath();g.ellipse(boss.x,boss.y-h*.5,w*.7,h*.55,s.flip*.3,0,Math.PI*1.8);g.stroke();}
  for(const p of s.pulses){const q=project(p.x,p.z),r=13*q.sc;g.drawImage(creatures[p.value<0?-1:1][0],q.x-r,q.y-r*2,r*2,r*2);label(q.x,q.y+12,signed(p.value),p.value>0?'#147bbb':'#c33953',11);}
- const player=project(s.x,s.z),n=Math.min(65,Math.max(0,Math.round(s.visualArmy))),r=10*player.sc,spread=Math.min(W*.10,Math.sqrt(n)*r*1.1);
+ const player=project(s.x,s.z),n=Math.min(65,Math.max(0,Math.round(s.visualArmy))),r=Math.min(10,H*.016)*player.sc,spread=Math.min(H*.10,Math.sqrt(n)*r*1.1);
  g.fillStyle='#25332d44';g.beginPath();g.ellipse(player.x+3,player.y+2,spread+5,spread*.5,0,0,7);g.fill();
  for(let i=0;i<n;i++){const a=i*2.4,d=Math.sqrt((i+.5)/n)*spread,x=player.x+Math.cos(a)*d,y=player.y+Math.sin(a)*d*.45;g.drawImage(creatures[s.value<0?-1:1][i%4],x-r,y-r*2+Math.sin(clock*7+i)*r*.15,r*2,r*2);}
  if(s.canceling||s.absorbing){const mid={x:(player.x+boss.x)/2,y:(player.y+boss.y)/2};line([{x:mid.x-W*.06,y:mid.y},{x:mid.x+W*.06,y:mid.y}],'#f1fbff',5);for(let i=0;i<8;i++){g.fillStyle=i%2?'#8de7ff':'#ffa1b6';g.beginPath();g.arc(mid.x+Math.sin(i*9+clock*8)*W*.05,mid.y-i%3*4,2,0,7);g.fill();}}

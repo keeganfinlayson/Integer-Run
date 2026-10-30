@@ -1,0 +1,12 @@
+(()=>{const stone=new Image(),forest=new Image();stone.src='assets/mossy-stone.webp';forest.src='assets/forest-chasm.webp';
+function draw(g,{W,H,project,position=0,pair=null,arena=false}){const poly=(p,c)=>{g.fillStyle=c;g.beginPath();p.forEach((v,i)=>i?g.lineTo(v.x,v.y):g.moveTo(v.x,v.y));g.closePath();g.fill()};
+if(forest.complete&&forest.naturalWidth){const sw=forest.naturalWidth,sh=forest.naturalHeight;g.drawImage(forest,0,0,sw,sh*.72,0,0,W,H)}else{g.fillStyle='#527d83';g.fillRect(0,0,W,H)}
+const hole=z=>pair&&z>pair.z-120&&z<pair.z+160?.38*Math.sin(Math.PI*(z-pair.z+120)/280):0;
+function face(a,b,h){poly([a,b,{x:b.x,y:b.y+h*b.sc},{x:a.x,y:a.y+h*a.sc}],'#7d7256');g.strokeStyle='#514e3b';g.lineWidth=1;for(let t=12;t<h;t+=12){g.beginPath();g.moveTo(a.x,a.y+t*a.sc);g.lineTo(b.x,b.y+t*b.sc);g.stroke()}}
+function wall(a,b,i){const h=22;face({...a,y:a.y-h*a.sc},{...b,y:b.y-h*b.sc},h);g.strokeStyle='#e9d5a8';g.lineWidth=3;g.beginPath();g.moveTo(a.x,a.y-h*a.sc);g.lineTo(b.x,b.y-h*b.sc);g.stroke();if(i%5===0){g.fillStyle='#ab956b';g.fillRect(a.x-6*a.sc,a.y-34*a.sc,12*a.sc,34*a.sc);g.fillStyle='#f0dcae';g.fillRect(a.x-8*a.sc,a.y-36*a.sc,16*a.sc,5*a.sc)}}
+// Masonry spandrels, rounded arch openings and tapered load-bearing piers.
+for(let z=position+1200;z>position-100;z-=160){for(const side of [-1,1]){const a=project(side,z),b=project(side,z+160),h=120;g.fillStyle='#95815e';g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.lineTo(b.x,b.y+70*b.sc);g.bezierCurveTo(b.x,b.y+10*b.sc,a.x,a.y+10*a.sc,a.x,a.y+70*a.sc);g.closePath();g.fill();face(a,{...a,x:a.x+side*14*a.sc},400);}}
+for(let z=position+1200,i=0;z>position-130;z-=12,i++){const za=z+12,a=project(-1,z),b=project(1,z),c=project(1,za),d=project(-1,za);const gap=hole(z),gap2=hole(za);const ranges=gap?[[-1,-gap,-1,-gap2],[gap,1,gap2,1]]:[[-1,1,-1,1]];for(const [l,r,lf,rf]of ranges){const pts=[project(l,z),project(r,z),project(rf,za),project(lf,za)];poly(pts,'#c8ae7b');if(stone.complete&&stone.naturalWidth){g.save();g.beginPath();pts.forEach((p,k)=>k?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.closePath();g.clip();const sy=((z%280)+280)%280/280*stone.naturalHeight;g.drawImage(stone,0,sy,stone.naturalWidth,Math.min(55,stone.naturalHeight-sy),a.x,d.y,b.x-a.x,Math.max(1,a.y-d.y+1));g.restore()}}
+for(const side of [-1,1]){wall(project(side,z),project(side,za),i);if(gap)wall(project(side*gap,z),project(side*gap2,za),i)}}
+}
+window.RunEnvironment={draw};})();

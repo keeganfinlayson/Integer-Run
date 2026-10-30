@@ -39,7 +39,7 @@ function makeLevel(index=0,seed=1,difficulty='standard'){
  const pads=(id,z,title,items)=>({id,z:z*scale,type:'pads',title,items});
  let rows=[
   pads('start',210,'Choose your opening move',[op('×(−2)','mul',-2),op('+8','add',8)]),
-  {id:'pair',z:620*scale,hold:870*scale,type:'incoming',title:'Choose which swarm reaches you first',items:[{id:'red',v:spec.red},{id:'blue',v:spec.blue}]},
+  {id:'pair',z:620*scale,hold:870*scale,type:'incoming',title:'Choose one army at the split',items:[{id:'red',v:spec.red},{id:'blue',v:spec.blue}]},
   pads('positiveChoice',1070,'The blue gate needs a positive swarm',[op('×(−1)','mul',-1),op('×(+1)','mul',1)]),
   {id:'positiveGate',z:1270*scale,type:'signGate',sign:1,title:'POSITIVE +'},
   pads('trim',1500,'Choose how much to subtract',spec.trim.map(n=>op('−'+n,'sub',n))),
@@ -66,7 +66,7 @@ function solve(level){
    const emit=(value,action)=>{if(value===0){failures.zero++;return;}next.push({value,actions:action?[...state.actions,{row:row.id,...action}]:state.actions,trace:[...state.trace,value]});};
    if(row.type==='pads'){for(const it of row.items){try{emit(operation(state.value,it.op),{label:it.label,x:it.x});}catch(e){failures.integer++;}}}
    else if(row.type==='incoming'){
-    for(const order of [row.items,[...row.items].reverse()]){let v=state.value;for(const it of order){v=hit(v,it.v);if(v===0)break;}emit(v,{order:order.map(it=>it.id),x:order[0].x});}
+    for(const it of row.items)emit(hit(state.value,it.v),{order:[it.id],x:it.x});
    }else if(row.type==='swarm')emit(hit(state.value,row.v));
    else if(row.type==='signGate'){if(signAllowed(state.value,row.sign))emit(state.value);else failures.sign++;}
    else if(row.type==='gate'){if(fits(state.value,row.capacity))emit(state.value);else failures.size++;}
