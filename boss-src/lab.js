@@ -36,28 +36,35 @@ function additive(delta){
  const op=delta>0?{kind:'add',n:delta}:{kind:'sub',n:-delta};
  return {...op,label:delta>0?'+'+delta:'−'+(-delta)};
 }
-function options(value){
- const sign=Math.sign(value)||1,mag=Math.abs(value);
- // Examples: −8 → (−8 is safe), (+16 crosses zero), (×(−1) is safe).
- // If only two lights are available, *both* remaining lights are safe.
- const safeChange=(s.round%3===1&&mag>4)?-sign*Math.min(4,mag-1):sign*8;
- const unsafeChange=-sign*(mag+8);
- const twoActive=s.pads.filter(p=>p.active).length<3;
- const a=additive(safeChange);
- const b=additive(twoActive?sign*6:unsafeChange);
- const factor=(s.round+s.padVisits.mul)%3===0?2:-1;
- const mult={kind:'mul',n:factor,label:factor<0?'×(−1)':'×2'};
- const byRole={addA:a,addB:b,mul:mult};
- return Object.keys(byRole).map(role=>{
-  const item=byRole[role];
-  const result=BlobMath.operation(value,item);
-  return {role,kind:item.kind,op:{kind:item.kind,n:item.n},label:item.label,result,safe:!crossesZero(value,item)};
- });
+// Generate an operation once when its light appears. It stays unchanged
+// until used, even if a wave or incoming army changes the player's value.
+function makeOperation(role,value){
+ if(role==='mul'){
+  const factor=(s.round+s.padVisits.mul)%3===0?2:-1;
+  return {kind:'mul',n:factor,label:factor<0?'×(−1)':'×2'};
+ }
+ // Keep a positive and a negative additive available. The multiplier and
+ // whichever additive has the player's sign are always nonlethal.
+ const sign=role==='addA'?1:-1,mag=Math.abs(value);
+ const candidates=[4,8,12,16].filter(amount=>sign===Math.sign(value)||amount<mag);
+ // For very small armies there may be no safe opposite-signed addition.
+ // The other additive and multiplication still provide two safe choices.
+ const amounts=candidates.length?candidates:[Math.max(1,mag-1)];
+ const amount=amounts[Math.floor(Math.random()*amounts.length)];
+ return additive(sign*amount);
+}
+function options(value=s.value){
+ return s.pads.map(p=>({
+  role:p.role,kind:p.op.kind,op:p.op,label:p.label,
+  result:BlobMath.operation(value,p.op),safe:!crossesZero(value,p.op)
+ }));
 }
 function nextPad(role){
  const turn=s.padVisits[role]++;
- return {...locationForPad(role),role,id:`${role}-${turn}`,active:true,
-  readyAt:0,warnAt:0,bornAt:s.arenaClock};
+ const operation=makeOperation(role,s.value);
+ return {...locationForPad(role),role,id:`${role}-${turn}`,
+  op:{kind:operation.kind,n:operation.n},label:operation.label,
+  active:true,readyAt:0,warnAt:0,bornAt:s.arenaClock};
 }
 function refreshPads(){
  s.padVisits={addA:0,addB:0,mul:0};
@@ -66,23 +73,13 @@ function refreshPads(){
  syncPads();
 }
 function syncPads(){
- const optionsByRole=Object.fromEntries(options(s.value).map(p=>[p.role,p]));
+ // Refresh only derived safety/result data. Never rewrite a live spot.
  for(const pad of s.pads){
-  const o=optionsByRole[pad.role];
-  Object.assign(pad,{op:o.op,result:o.result,label:o.label,safe:o.safe});
+  pad.result=BlobMath.operation(s.value,pad.op);
+  pad.safe=!crossesZero(s.value,pad.op);
  }
 }
-function updatePads(){
- for(const pad of s.pads){
-  if(!pad.active&&s.arenaClock>=pad.readyAt){
-   pad.active=true;
-   pad.bornAt=s.arenaClock;
-   // A pad forming under the army must not activate without a new entry.
-   if(padDistance(pad)<1)s.padReady=false;
-   note('A new operation light has appeared.');
-  }
- }
-}
+function updatePads(){ /* All three operation lights stay available. */ }
 function note(text){$('notice').textContent=text;s.log.push(text);if(s.log.length>20)s.log.shift();}
 function reset(){paused=false;$('pause').textContent='Pause';s={mode:'battle',forward:330,camera:0,x:0,z:460,tx:0,tz:460,value:entryArmy,hp:100,visualHP:100,sign:1,nextSign:-1,phase:'warn',timer:2.2,round:0,padVisits:{addA:0,addB:0,mul:0},padReady:true,arenaClock:0,pads:[],pulses:[],padGhosts:[],log:[],flip:0,wave:null,hit:0,placeAnim:0,poseMix:0,end:false,contact:0,canceling:false,absorbing:false,visualArmy:Math.abs(entryArmy)};refreshPads();note('Boss checkpoint · Dr. Fin starts at +100.');beginPhase('warn');$('result').hidden=true;}
 function deploy(){
@@ -138,17 +135,12 @@ function step(dt){if(paused||s.end)return;clock+=dt;s.arenaClock+=dt;s.placeAnim
   }
   s.value=result;
   if(!s.value){stop(false);return;}
-  // If another light is still relocating, finish its arrival before
-  // deactivating this one. This keeps two usable choices at all times,
-  // even when the player reaches consecutive spots rapidly.
-  const previous=s.pads.find(p=>!p.active);
-  if(previous){previous.active=true;previous.readyAt=0;previous.bornAt=s.arenaClock;}
-  // After use, the light fades from its old location; the new random
-  // location starts glowing before that operation becomes available.
+  // Fade out the used light and form a new one immediately elsewhere.
+  // Keep all three available: multiplier + the matching-sign addition
+  // guarantee at least two safe choices without retargeting any old text.
   s.padGhosts.push({...pad,expires:s.arenaClock+.52});
-  const next=nextPad(pad.role);
-  s.pads[tile]={...next,active:false,warnAt:s.arenaClock+.27,readyAt:s.arenaClock+1.58};
-  syncPads(); // With only two active spots, BOTH are guaranteed safe.
+  s.pads[tile]=nextPad(pad.role);
+  syncPads();
   note(`${signed(old)} ${pad.label} = ${signed(s.value)}. A new light is forming elsewhere.`);
  }
 
@@ -267,8 +259,8 @@ function draw(){scenery();supports();
  // labels or physical button discs. Spots fade out, then respawn elsewhere.
  if(s.mode!=='approach')for(const pad of [...s.padGhosts,...s.pads]){
   const ghost=pad.expires!==undefined;
-  const warning=!ghost&&!pad.active&&s.arenaClock>=pad.warnAt&&s.arenaClock<pad.readyAt;
-  if(!ghost&&!pad.active&&!warning)continue;
+  const forming=!ghost&&pad.active&&(s.arenaClock-pad.bornAt)<.65;
+  if(!ghost&&!pad.active)continue;
   const p=project(pad.x,pad.z),rx=half*.225*p.sc,ry=rx*.50;
   // The sign of the *operation* determines the light color.
   const negative=/[−-]/.test(pad.label);
@@ -280,8 +272,7 @@ function draw(){scenery();supports();
    rim:'128,225,255',shadow:'#41cfff',ink:'#f9ffff',outline:'#103957'
   };
   const timeIn=ghost?clamp((pad.expires-s.arenaClock)/.52,0,1):
-   warning?clamp((s.arenaClock-pad.warnAt)/(pad.readyAt-pad.warnAt),0,1):
-   clamp((s.arenaClock-pad.bornAt)/.65,0,1);
+   clamp((s.arenaClock-pad.bornAt+.20)/.65,0,1);
   const power=timeIn*(.95+.05*Math.sin(clock*6+pad.x*3));
   // Measure the operation so long values like ×(−1) fit within the light.
   const fontPx=Math.max(38,54*p.sc);
@@ -304,7 +295,7 @@ function draw(){scenery();supports();
   g.strokeStyle=`rgba(${light.inner},${.40*power})`;
   g.lineWidth=Math.max(.8,1.3*p.sc);
   g.beginPath();g.ellipse(0,0,radiusX*1.15,rx*.87,0,0,Math.PI*2);g.stroke();
-  if(!warning){
+  if(!ghost){
    // Switch away from screen blending for the letters themselves:
    // luminous white lettering needs a crisp, dark boundary on light stone.
    g.save();g.scale(1,1.16);
@@ -325,8 +316,8 @@ function draw(){scenery();supports();
    g.restore();
   }
   g.restore();
-  // Brief tongues of energy announce a forming spot without an icon.
-  if(warning){
+  // Brief tongues of energy mark a new spot as it materializes.
+  if(forming){
    g.save();g.globalAlpha=power*.95;g.strokeStyle=negative?'#ff9aa8':'#b2f5ff';g.shadowColor=light.shadow;g.shadowBlur=14*power;g.lineWidth=1.8*p.sc;
    for(let i=0;i<6;i++){
     const a=i*Math.PI/3+clock*2.3,x=Math.cos(a)*rx,y=Math.sin(a)*ry;
