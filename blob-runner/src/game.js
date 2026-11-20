@@ -30,7 +30,7 @@ function round(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
 function tag(x,y,text,color='#245d69',size=16){ctx.font=`800 ${size}px system-ui`;const width=ctx.measureText(text).width+18,height=size+13;ctx.fillStyle='#17364820';round(x-width/2,y-height/2+3,width,height,7);ctx.fill();ctx.fillStyle=color;round(x-width/2,y-height/2,width,height,7);ctx.fill();ctx.strokeStyle='#ffffffdd';ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle='white';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y);}
 function message(text){ui.notice.textContent=text;}
 const checkpointKey='integer-runner-boss-v1';let bossFrame=null;
-function bossURL(){return new URL(location.pathname.includes('/blob-runner/')?'../boss.html':'boss.html',location.href);}
+function bossURL(){const url=new URL(location.pathname.includes('/blob-runner/')?'../boss.html':'boss.html',location.href);url.searchParams.set('v','20261119-stable-spots');return url;}
 function saveCheckpoint(cp){try{localStorage.setItem(checkpointKey,JSON.stringify(cp));}catch(e){}}
 function readCheckpoint(){try{const cp=JSON.parse(localStorage.getItem(checkpointKey));return cp&&Number.isSafeInteger(cp.value)&&cp.value!==0&&Math.abs(cp.value)<=1000000?cp:null;}catch(e){return null;}}
 function launchBoss(value,only=false){const cp={value,only,level:selectedLevel,difficulty,seed:runSeed};saveCheckpoint(cp);s.mode='boss';keys.clear();held=0;
